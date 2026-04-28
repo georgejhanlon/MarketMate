@@ -250,12 +250,13 @@ export default function MarketMatePage() {
           font-family: var(--fh);
           font-weight: 900;
           font-size: clamp(42px, 9vw, 100px);
-          letter-spacing: -0.045em;
+          letter-spacing: -0.06em;
           line-height: 1;
           white-space: nowrap;
+          text-transform: uppercase;
         }
         .reel-item.role     { color: var(--d); }
-        .reel-item.everybody { color: var(--o); font-size: clamp(44px, 9.5vw, 104px); letter-spacing: -0.05em; }
+        .reel-item.everybody { color: var(--o); font-size: clamp(44px, 9.5vw, 104px); letter-spacing: -0.06em; }
 
         /* Spin button */
         .spin-btn {
@@ -312,8 +313,12 @@ export default function MarketMatePage() {
           background:"rgba(242,242,242,0.84)",
         }}
       >
-        <span className="fh" style={{ fontSize:20, fontWeight:900, letterSpacing:"-0.04em", color:"var(--d)" }}>
-          MarketMate
+        <span className="fh" style={{
+          fontSize:18, fontWeight:900, letterSpacing:"-0.07em",
+          color:"var(--o)", textTransform:"uppercase",
+          lineHeight:0.88, display:"inline-block",
+        }}>
+          MARK<span style={{ letterSpacing:"-0.16em" }}>E</span>T<br/>MA<span style={{ letterSpacing:"-0.16em" }}>T</span>E
         </span>
         <motion.a href="#waitlist"
           whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }}
@@ -343,12 +348,13 @@ export default function MarketMatePage() {
           transition={{ delay:0.2, duration:0.7, ease:[0.22,1,0.36,1] }}
           className="fh"
           style={{
-            fontSize:"clamp(32px,6.5vw,80px)",
-            fontWeight:900, letterSpacing:"-0.04em",
-            color:"var(--o)", lineHeight:1.04, marginBottom:16,
+            fontSize:"clamp(36px,7vw,90px)",
+            fontWeight:900, letterSpacing:"-0.06em",
+            color:"var(--o)", lineHeight:0.95, marginBottom:20,
+            textTransform:"uppercase",
           }}
         >
-          MarketMate is for…
+          MARKETMA<span style={{ letterSpacing:"-0.16em" }}>T</span>E<br/>IS FOR…
         </motion.h1>
 
         {/* ── Reel ── */}
