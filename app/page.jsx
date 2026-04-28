@@ -315,15 +315,6 @@ export default function MarketMatePage() {
           padding:"0 24px", textAlign:"center",
         }}
       >
-        <motion.p
-          initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }}
-          transition={{ delay:0.1, duration:0.6 }}
-          className="fb"
-          style={{ fontSize:11, fontWeight:600, letterSpacing:"0.22em", textTransform:"uppercase", color:"var(--o)", marginBottom:36 }}
-        >
-          MarketMate · Coming Soon
-        </motion.p>
-
         <motion.h1
           initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}
           transition={{ delay:0.2, duration:0.7, ease:[0.22,1,0.36,1] }}
@@ -422,82 +413,248 @@ export default function MarketMatePage() {
         </motion.p>
       </section>
 
-      {/* ── Meet Mate ── */}
+      {/* ── How it works ── */}
       <section style={{
         position:"relative", zIndex:1,
         display:"flex", flexDirection:"column", alignItems:"center",
         padding:"40px 24px 120px",
       }}>
+        <style>{`
+          .hiw-card {
+            background: #fff;
+            border-radius: 18px;
+            border: 1px solid rgba(41,43,45,0.08);
+            padding: 22px 24px 26px;
+            cursor: pointer;
+            transition: all 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+          }
+          .hiw-card:hover {
+            border-color: rgba(255,107,53,0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(255,107,53,0.1);
+          }
+          .hiw-card.featured { background: #ff6b35; border-color: #ff6b35; }
+          .hiw-card.featured:hover { box-shadow: 0 12px 32px rgba(255,107,53,0.32); }
+
+          .hiw-detail {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease, margin 0.4s;
+            margin-top: 0;
+          }
+          .hiw-card:hover .hiw-detail {
+            max-height: 280px;
+            opacity: 1;
+            margin-top: 14px;
+          }
+
+          .hiw-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+          }
+          @media (max-width: 720px) {
+            .hiw-grid { grid-template-columns: 1fr; }
+          }
+        `}</style>
+
         <motion.div
-          initial={{ opacity:0, y:40 }} whileInView={{ opacity:1, y:0 }}
+          initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }}
           viewport={{ once:true, margin:"-60px" }}
-          transition={{ duration:0.9, ease:[0.22,1,0.36,1] }}
-          style={{
-            background:"#fff", borderRadius:28,
-            border:"1.5px solid rgba(255,107,53,0.1)",
-            padding:"clamp(32px,5vw,52px) clamp(28px,5vw,56px)",
-            maxWidth:680, width:"100%",
-            boxShadow:"0 8px 52px rgba(0,0,0,0.055)",
-          }}
+          transition={{ duration:0.8, ease:[0.22,1,0.36,1] }}
+          style={{ maxWidth:880, width:"100%", textAlign:"center" }}
         >
-          <div style={{ display:"flex", alignItems:"center", gap:16, marginBottom:36 }}>
-            <div style={{
-              width:52, height:52, borderRadius:16, background:"var(--o)",
-              display:"flex", alignItems:"center", justifyContent:"center",
-              boxShadow:"0 4px 18px rgba(255,107,53,0.32)", flexShrink:0, fontSize:22, color:"#fff",
-            }}>✦</div>
-            <div>
-              <div className="fh" style={{ fontWeight:900, fontSize:22, color:"var(--d)", letterSpacing:"-0.04em" }}>Meet Mate</div>
-              <div className="fb" style={{ fontSize:13, color:"var(--d)", opacity:0.38, marginTop:2 }}>Your AI marketing agent</div>
-            </div>
-            <div className="fb" style={{ marginLeft:"auto", display:"flex", alignItems:"center", gap:6, fontSize:12, color:"var(--d)", opacity:0.35, fontWeight:500 }}>
-              <div style={{ width:7, height:7, borderRadius:"50%", background:"#4caf7d" }} />
-              Online
-            </div>
+          <p className="fb" style={{
+            fontSize:11, fontWeight:600, letterSpacing:"0.2em",
+            textTransform:"uppercase", color:"var(--o)", marginBottom:14,
+          }}>How it works</p>
+
+          <h2 className="fh" style={{
+            fontSize:"clamp(28px,4.5vw,48px)", fontWeight:900,
+            letterSpacing:"-0.04em", color:"var(--d)",
+            lineHeight:1.08, marginBottom:14,
+          }}>
+            Marketing, sorted.
+          </h2>
+          <p className="fb" style={{
+            fontSize:"clamp(15px,1.7vw,17px)", color:"var(--d)", opacity:0.5,
+            maxWidth:500, lineHeight:1.7, margin:"0 auto 56px",
+          }}>
+            <em>Mate</em> handles the thinking. You stay in control. Be as hands-on or hands-off as suits your business.
+          </p>
+
+          {/* Onboard — solo top card */}
+          <div style={{ display:"flex", justifyContent:"center", marginBottom:0 }}>
+            <motion.div
+              initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
+              viewport={{ once:true }} transition={{ duration:0.6 }}
+              className="hiw-card"
+              style={{ maxWidth:380, width:"100%", textAlign:"left" }}
+            >
+              <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:14 }}>
+                <span className="fb" style={{
+                  fontSize:9.5, fontWeight:700, letterSpacing:"0.12em",
+                  padding:"3px 10px", borderRadius:20,
+                  background:"rgba(255,107,53,0.12)", color:"#993C1D",
+                }}>ONE-TIME</span>
+              </div>
+              <h3 className="fh" style={{
+                fontSize:24, fontWeight:900, letterSpacing:"-0.03em",
+                color:"var(--d)", marginBottom:8, lineHeight:1.05,
+              }}>Onboard</h3>
+              <p className="fb" style={{
+                fontSize:14, color:"rgba(41,43,45,0.55)", lineHeight:1.5,
+              }}>
+                <em>Mate</em> learns your business in minutes.
+              </p>
+              <div className="hiw-detail">
+                <ul style={{ listStyle:"none", padding:0, margin:0 }}>
+                  {[
+                    "Short conversation, not a form",
+                    <>Tells <em>Mate</em> who you are, what you do, who buys from you</>,
+                    "Each onboarding is unique — no templates",
+                  ].map((item, i) => (
+                    <li key={i} className="fb" style={{
+                      fontSize:13, lineHeight:1.5, padding:"4px 0",
+                      color:"rgba(41,43,45,0.65)", display:"flex", gap:8,
+                    }}>
+                      <span style={{ opacity:0.5, flexShrink:0 }}>—</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
           </div>
 
-          <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+          {/* Connector arrow */}
+          <motion.div
+            initial={{ opacity:0, scaleY:0 }} whileInView={{ opacity:1, scaleY:1 }}
+            viewport={{ once:true }} transition={{ delay:0.2, duration:0.6 }}
+            style={{ display:"flex", flexDirection:"column", alignItems:"center", margin:"22px 0 10px", transformOrigin:"top" }}
+          >
+            <div style={{
+              width:1.5, height:38,
+              background:"linear-gradient(to bottom, transparent, #ff6b35)",
+              opacity:0.5,
+            }} />
+            <div style={{ color:"var(--o)", fontSize:14, lineHeight:1, opacity:0.7, marginTop:-2 }}>▼</div>
+          </motion.div>
+
+          {/* Cycle label */}
+          <p className="fb" style={{
+            fontSize:10, fontWeight:700, letterSpacing:"0.18em",
+            textTransform:"uppercase", color:"rgba(41,43,45,0.32)",
+            margin:"6px 0 22px",
+          }}>
+            Then the monthly cycle begins
+          </p>
+
+          {/* 3 cycle cards */}
+          <div className="hiw-grid">
             {[
-              { from:"user", text:"I'm a plumber in Leeds. I never have time for marketing." },
-              { from:"mate", text:"That's exactly what I'm here for. Tell me about your work — We'll put together a strategy, and execute it together. Updated and refined every month." },
-              { from:"user", text:"What do you actually need from me?" },
-              { from:"mate", text:"Just a few minutes to get set up. After that, I run in the background, and we check in when you're ready to market!" },
-            ].map((msg, i) => (
-              <motion.div key={i}
-                initial={{ opacity:0, y:8 }} whileInView={{ opacity:1, y:0 }}
-                viewport={{ once:true }} transition={{ delay:i*0.09, duration:0.45 }}
-                className="fb"
-                style={{
-                  alignSelf: msg.from==="mate" ? "flex-start" : "flex-end",
-                  maxWidth:"82%", padding:"13px 18px", borderRadius:18,
-                  borderBottomLeftRadius:  msg.from==="mate" ? 4 : 18,
-                  borderBottomRightRadius: msg.from==="user" ? 4 : 18,
-                  background: msg.from==="mate" ? "var(--o)" : "#f0f0f0",
-                  color:      msg.from==="mate" ? "#fff" : "var(--d)",
-                  fontSize:15, lineHeight:1.55,
-                }}
+              {
+                title:"Strategise",
+                tag:<><em>Mate</em> drafts your plan. You shape it.</>,
+                items:[
+                  "Recommended channels, ranked by impact",
+                  "90-day content calendar",
+                  "Competitor overview",
+                  "Quick wins to start",
+                ],
+                featured:false,
+              },
+              {
+                title:"Execute",
+                tag:<><em>Mate</em> does the heavy lifting.</>,
+                items:[
+                  "Weekly task lists",
+                  "Ready-made content drafts",
+                  "Reminders, nudges, trend alerts",
+                  "Approve, tweak or rewrite — your call",
+                ],
+                featured:false,
+              },
+              {
+                title:"Collect",
+                tag:<><em>Mate</em> learns. Your strategy gets sharper.</>,
+                items:[
+                  "Tracks what worked, what didn't",
+                  "Refines next month's plan automatically",
+                  "Smarter every cycle",
+                ],
+                featured:true,
+              },
+            ].map((step, i) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
+                viewport={{ once:true }} transition={{ delay:0.1 + i*0.08, duration:0.55 }}
+                className={`hiw-card${step.featured ? " featured" : ""}`}
+                style={{ minHeight:200, textAlign:"left" }}
               >
-                {msg.text}
-                {i===3 && <span className="cur" />}
+                <div style={{ display:"flex", justifyContent:"flex-end", marginBottom:14 }}>
+                  <span className="fb" style={{
+                    fontSize:9.5, fontWeight:700, letterSpacing:"0.12em",
+                    padding:"3px 10px", borderRadius:20,
+                    background: step.featured ? "rgba(255,255,255,0.2)" : "rgba(41,43,45,0.06)",
+                    color: step.featured ? "#fff" : "rgba(41,43,45,0.55)",
+                  }}>CYCLE</span>
+                </div>
+                <h3 className="fh" style={{
+                  fontSize:22, fontWeight:900, letterSpacing:"-0.03em",
+                  color: step.featured ? "#fff" : "var(--d)",
+                  marginBottom:8, lineHeight:1.05,
+                }}>{step.title}</h3>
+                <p className="fb" style={{
+                  fontSize:13.5, lineHeight:1.5,
+                  color: step.featured ? "rgba(255,255,255,0.85)" : "rgba(41,43,45,0.55)",
+                }}>
+                  {step.tag}
+                </p>
+                <div className="hiw-detail">
+                  <ul style={{ listStyle:"none", padding:0, margin:0 }}>
+                    {step.items.map((item, j) => (
+                      <li key={j} className="fb" style={{
+                        fontSize:13, lineHeight:1.5, padding:"4px 0",
+                        color: step.featured ? "rgba(255,255,255,0.92)" : "rgba(41,43,45,0.65)",
+                        display:"flex", gap:8,
+                      }}>
+                        <span style={{ opacity:0.5, flexShrink:0 }}>—</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </motion.div>
             ))}
           </div>
 
-          <div style={{
-            display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(100px,1fr))",
-            gap:10, marginTop:36, paddingTop:28, borderTop:"1px solid rgba(41,43,45,0.07)",
-          }}>
-            {[
-              {icon:"✍️",label:"Content"},{icon:"🔍",label:"SEO"},
-              {icon:"📱",label:"Social"},{icon:"📧",label:"Email"},
-              {icon:"📊",label:"Reports"},
-            ].map(({icon,label}) => (
-              <div key={label} style={{ textAlign:"center", padding:"13px 8px", borderRadius:12, background:"rgba(255,107,53,0.05)" }}>
-                <div style={{ fontSize:18, marginBottom:5 }}>{icon}</div>
-                <div className="fb" style={{ fontSize:12, color:"var(--d)", opacity:0.5, fontWeight:600 }}>{label}</div>
-              </div>
-            ))}
-          </div>
+          {/* Loop indicator */}
+          <motion.div
+            initial={{ opacity:0 }} whileInView={{ opacity:1 }}
+            viewport={{ once:true }} transition={{ delay:0.4, duration:0.6 }}
+            style={{
+              display:"flex", alignItems:"center", justifyContent:"center",
+              marginTop:24, gap:14,
+            }}
+          >
+            <div style={{ flex:1, maxWidth:140, height:1, background:"rgba(41,43,45,0.08)" }} />
+            <span className="fb" style={{
+              fontSize:11, color:"var(--o)", fontStyle:"italic",
+              display:"inline-flex", alignItems:"center", gap:6,
+            }}>
+              ↺ gets smarter every cycle
+            </span>
+            <div style={{ flex:1, maxWidth:140, height:1, background:"rgba(41,43,45,0.08)" }} />
+          </motion.div>
+
         </motion.div>
       </section>
 
