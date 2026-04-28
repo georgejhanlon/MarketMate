@@ -459,9 +459,9 @@ export default function MarketMatePage() {
           <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
             {[
               { from:"user", text:"I'm a plumber in Leeds. I never have time for marketing." },
-              { from:"mate", text:"That's exactly what I'm here for. Tell me about your work — I'll handle the rest. Content, SEO, social, email. Done for you, every month." },
+              { from:"mate", text:"That's exactly what I'm here for. Tell me about your work — We'll put together a strategy, and execute it together. Updated and refined every month." },
               { from:"user", text:"What do you actually need from me?" },
-              { from:"mate", text:"Just a few minutes to get set up. After that, I run in the background. You get a monthly summary — and you can always step in, but you won't need to." },
+              { from:"mate", text:"Just a few minutes to get set up. After that, I run in the background, and we check in when you're ready to market!" },
             ].map((msg, i) => (
               <motion.div key={i}
                 initial={{ opacity:0, y:8 }} whileInView={{ opacity:1, y:0 }}
