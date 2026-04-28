@@ -155,10 +155,33 @@ export default function MarketMatePage() {
     spin();
   }, [phase, spin]);
 
-  const handleSubmit = (e) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formState.email) return;
-    setSubmitted(true);
+    if (!formState.email || submitting) return;
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch("https://api.sheetmonkey.io/form/pRn9noNkhc2zJJxGzQ6CZZ", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          Email: formState.email,
+          Name: formState.name || "",
+          Company: formState.company || "",
+          Date: new Date().toISOString(),
+        }),
+      });
+      if (!res.ok) throw new Error("submit failed");
+      setSubmitted(true);
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -717,14 +740,23 @@ export default function MarketMatePage() {
                 />
               ))}
               <motion.button type="submit"
-                whileHover={{ scale:1.02, background:"#e85e28" }} whileTap={{ scale:0.97 }}
+                disabled={submitting}
+                whileHover={!submitting ? { scale:1.02, background:"#e85e28" } : {}}
+                whileTap={!submitting ? { scale:0.97 } : {}}
                 style={{
                   marginTop:4, padding:"15px 28px", borderRadius:13, border:"none",
                   background:"var(--o)", color:"#fff", fontSize:15, fontWeight:700,
                   fontFamily:"var(--fb)", letterSpacing:"0.04em", textTransform:"uppercase",
-                  cursor:"pointer", boxShadow:"0 4px 24px rgba(255,107,53,0.3)", transition:"background 0.18s",
+                  cursor: submitting ? "not-allowed" : "pointer",
+                  opacity: submitting ? 0.7 : 1,
+                  boxShadow:"0 4px 24px rgba(255,107,53,0.3)", transition:"background 0.18s, opacity 0.18s",
                 }}
-              >Join the waitlist →</motion.button>
+              >{submitting ? "Joining..." : "Join the waitlist →"}</motion.button>
+              {error && (
+                <p className="fb" style={{ fontSize:13, color:"#c0392b", marginTop:4, fontWeight:500 }}>
+                  {error}
+                </p>
+              )}
               <p className="fb" style={{ fontSize:12, color:"var(--d)", opacity:0.3, marginTop:2 }}>
                 No spam, ever. Unsubscribe anytime.
               </p>
