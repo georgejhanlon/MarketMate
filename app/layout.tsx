@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "MarketMate — Marketing for everybody",
-  description: "AI-powered marketing for UK sole traders and small businesses. Done for you, every month.",
+  description: "AI-powered marketing for UK sole traders and small businesses",
   icons: {
     icon: "/favicon.ico",
   },
