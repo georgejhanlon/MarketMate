@@ -17,7 +17,7 @@ const ACCOUNT_MANAGER = {
   role: "Founder | Your Account Mate",
   email: "george@getmarketmate.co.uk",
   initials: "GH",
-  photo: null,
+  photo: "/george.jpg",
 };
 
 /* ─────────────────────────────────────────────────────────────────────────
