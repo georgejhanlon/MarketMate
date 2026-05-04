@@ -20,7 +20,7 @@ const ACCOUNT_MANAGER = {
   role: "Founder | Your Account Mate",
   email: "george@getmarketmate.co.uk",
   initials: "GH",
-  photo: "/george.jpg"
+  photo: null, // set to "/george.jpg" once hosted
 };
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -997,6 +997,8 @@ function BootScreen({ onBegin }) {
           fontWeight: 900, letterSpacing: "-0.07em",
           color: "var(--o)", textTransform: "uppercase",
           lineHeight: 0.88, marginBottom: 36,
+          textAlign: "left",
+          display: "inline-block",
         }}
       >
         MARK<span style={{ letterSpacing: "-0.16em" }}>E</span>T<br/>MA<span style={{ letterSpacing: "-0.16em" }}>T</span>E
