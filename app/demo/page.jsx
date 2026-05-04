@@ -20,7 +20,7 @@ const ACCOUNT_MANAGER = {
   role: "Founder | Your Account Mate",
   email: "george@getmarketmate.co.uk",
   initials: "GH",
-  photo: null, // set to "/george.jpg" once hosted
+  photo: "/george.jpg"
 };
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -587,9 +587,8 @@ export default function DemoPage() {
           className="presenter-btn"
           onClick={() => setPanelOpen((o) => !o)}
           title="Presenter controls (⌘/)"
-        >
-          <span style={{ fontSize: 12, opacity: 0.8 }}>⌘</span>
-        </button>
+          aria-label="Presenter controls"
+        />
       )}
 
       <PresenterPanel
@@ -714,6 +713,8 @@ function PasswordGate({ onUnlock }) {
           fontWeight: 900, letterSpacing: "-0.07em",
           color: "var(--o)", textTransform: "uppercase",
           lineHeight: 0.88, marginBottom: 28,
+          textAlign: "left",
+          display: "inline-block",
         }}
       >
         MARK<span style={{ letterSpacing: "-0.16em" }}>E</span>T<br/>MA<span style={{ letterSpacing: "-0.16em" }}>T</span>E
@@ -2130,18 +2131,21 @@ function GlobalStyles() {
       }
 
       .presenter-btn {
-        position: fixed; top: 18px; right: 18px;
-        width: 36px; height: 36px;
-        border-radius: 12px;
-        background: rgba(42,39,37,0.92);
-        color: white; border: none; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
+        position: fixed; top: 20px; right: 20px;
+        width: 56px; height: 22px;
+        border-radius: 999px;
+        background: rgba(42,39,37,0.12);
+        border: none;
+        cursor: pointer;
         z-index: 200;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.16);
-        transition: opacity 0.2s;
-        opacity: 0.8;
+        transition: background 0.2s, transform 0.18s;
+        padding: 0;
       }
-      .presenter-btn:hover { opacity: 1; }
+      .presenter-btn:hover {
+        background: rgba(42,39,37,0.22);
+        transform: scale(1.04);
+      }
+      .presenter-btn:active { transform: scale(0.96); }
 
       /* Loader orbit */
       .orbit-wrap {
@@ -2326,7 +2330,7 @@ function GlobalStyles() {
       .ghost-btn-sm:hover { border-color: var(--d-soft); color: var(--d); }
 
       .panel {
-        position: fixed; top: 64px; right: 18px;
+        position: fixed; top: 54px; right: 20px;
         width: 280px;
         background: var(--d); color: white;
         border-radius: 14px;
