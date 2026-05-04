@@ -5,9 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 /* ─────────────────────────────────────────────────────────────────────────
    PASSWORD GATE
-   Client-side only — anyone reading the JS source can find this. Fine for
-   a demo gate; not security. If real protection is needed later, move to
-   a server-side check (Vercel Edge function or middleware).
    ───────────────────────────────────────────────────────────────────────── */
 const DEMO_PASSWORD = "DemoKey";
 const STORAGE_KEY = "mm_demo_unlocked";
@@ -20,137 +17,34 @@ const ACCOUNT_MANAGER = {
   role: "Founder | Your Account Mate",
   email: "george@getmarketmate.co.uk",
   initials: "GH",
-  photo: null, // set to "/george.jpg" once hosted
+  photo: null,
 };
 
 /* ─────────────────────────────────────────────────────────────────────────
-   Mate's question script (unchanged from v2)
-   ───────────────────────────────────────────────────────────────────────── */
-
-const SCRIPT = [
-  {
-    id: "q1",
-    ask: "Right, before we get into anything — tell me about the business. What do you do, and where are you based?",
-    reply: (a) => {
-      const text = a.toLowerCase();
-      if (/(family|wife|husband|brother|son|daughter|dad)/.test(text))
-        return `A family-run thing — love that. Always a different feel to family businesses.`;
-      if (/(year|years)/.test(text))
-        return `Sounds like you've been at it a while. Good — means you know your customer.`;
-      return `Nice. Already getting a feel for it.`;
-    },
-    followup: {
-      condition: (a) => a.length < 40,
-      ask: "Give me a bit more — how long have you been going, just you or a team?",
-      reply: () => `That helps, thanks.`,
-    },
-  },
-  {
-    id: "q2",
-    ask: "Who do you usually work with? What sort of customers come to you?",
-    reply: (a) => {
-      const text = a.toLowerCase();
-      if (/(local|nearby|area)/.test(text))
-        return `Local customers — that's the sweet spot for what we do, by the way. Loads we can do there.`;
-      if (/(business|b2b|company|companies)/.test(text))
-        return `B2B — interesting. Different game to consumer, but no less work to do.`;
-      return `OK, that's clearer now.`;
-    },
-    followup: {
-      condition: (a) => a.length < 40,
-      ask: "And do they tend to find you the same way each time, or is it a mix?",
-      reply: () => `Useful to know.`,
-    },
-  },
-  {
-    id: "q3",
-    ask: "What are you doing for marketing at the moment? Be honest — anything actually working?",
-    reply: (a) => {
-      const text = a.toLowerCase();
-      if (/(nothing|not much|not really|barely|hardly)/.test(text))
-        return `Honest answer, appreciate it. Plenty of room to work with then — and most of it's the easy stuff.`;
-      if (/(facebook|insta|social)/.test(text))
-        return `Social — yeah, it's where most people start. Mixed bag for results though, isn't it.`;
-      if (/(google|search|seo)/.test(text))
-        return `Google's where the real intent is. We can definitely lean into that.`;
-      if (/(word of mouth|referral|recommend)/.test(text))
-        return `Word of mouth's brilliant — but it's a hard thing to scale on its own. We can build round it.`;
-      return `That's a fair starting point. Honestly, most businesses your size are in the same spot.`;
-    },
-  },
-  {
-    id: "q4",
-    ask: "Last one. If you picked up one extra customer a week from this, what would that mean for you?",
-    reply: (a) => {
-      const text = a.toLowerCase();
-      if (/(life|change|massive|huge|big)/.test(text))
-        return `That's the kind of bar worth aiming for. Right — give me a moment, I'll put something together.`;
-      if (/£|\$|pound|grand|k\b/.test(text))
-        return `Concrete number — good. That's what makes this real. One sec, drafting now.`;
-      return `Understood. That's the bar. Putting something together for you — give me a moment.`;
-    },
-  },
-];
-
-function shorten(text, max = 80) {
-  if (!text) return "";
-  const t = text.trim().replace(/\s+/g, " ");
-  return t.length <= max ? t : t.slice(0, max - 1) + "…";
-}
-
-/* ─────────────────────────────────────────────────────────────────────────
-   Industry detection — expanded
+   Industry detection — kept verbatim from v2 (works well, no need to change)
    ───────────────────────────────────────────────────────────────────────── */
 
 function detectIndustry(answers) {
   const text = answers.join(" ").toLowerCase();
-
-  // Trades
   if (/(plumb|boiler|leak|drain|heating|electric|wiring|sparky|builder|construction|roofer|carpenter|joiner|painter|decorator|gas|landscape)/.test(text)) return "trade";
-
-  // Beauty
   if (/(salon|hair|barber|nails|beauty|colour|stylist|makeup|aesthetic|brow|lash|tan)/.test(text)) return "beauty";
-
-  // Hospitality — split into restaurant vs cafe vs other
   if (/(restaurant|fine din|bistro|gastropub|chef|tasting menu)/.test(text)) return "restaurant";
   if (/(cafe|coffee shop|coffee house|barista|brunch spot)/.test(text)) return "cafe";
   if (/(bakery|kitchen|caterer|catering|food truck|deli|takeaway)/.test(text)) return "hospo";
-
-  // Wellness
   if (/(yoga|pilates|fitness|gym|personal trainer|coach|therapist|nutrition|massage|physio)/.test(text)) return "wellness";
-
-  // Creative
   if (/(photo|videograph|filmmaker|design|graphic|creative|studio|illustrator|brand designer)/.test(text)) return "creative";
-
-  // Travel
   if (/(travel|trip|holiday|tour|cruise|vacation|travel counsel|travel agent)/.test(text)) return "travel";
-
-  // Estate agent
   if (/(estate agent|realtor|property|lettings|sales agent|landlord)/.test(text)) return "estate";
-
-  // Pet care
   if (/(dog walk|pet sit|cat sit|grooming|kennel|cattery|pet care|dog trainer)/.test(text)) return "petcare";
-
-  // Shop / retail
   if (/(shop|boutique|retail|store|gift shop|florist|bookshop|bookstore)/.test(text)) return "retail";
-
-  // Legal
   if (/(lawyer|solicitor|legal|barrister|conveyanc|paralegal|attorney)/.test(text)) return "legal";
-
-  // Cars
   if (/(car deal|car sales|garage|mechanic|mot|autom|dealership|car wash)/.test(text)) return "cars";
-
   return "service";
 }
 
-function detectLocation(answers) {
-  const text = answers.join(" ");
-  const m = text.match(/(?:in|based in|near|around)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/);
-  return m ? m[1] : null;
-}
-
 /* ─────────────────────────────────────────────────────────────────────────
-   STRATEGY content per industry
+   STRATEGY content per industry — kept verbatim from v2
+   This is the template the LLM personalises in /api/strategy.
    ───────────────────────────────────────────────────────────────────────── */
 
 const STRATEGY_BY_INDUSTRY = {
@@ -339,7 +233,573 @@ const STRATEGY_BY_INDUSTRY = {
 };
 
 /* ─────────────────────────────────────────────────────────────────────────
-   useStreamedText hook
+   DASH_DEFAULTS — channels, KPIs, content mix, ICP per industry.
+   This is the contract between Strategy and Dashboard. Filled for all 13.
+   ───────────────────────────────────────────────────────────────────────── */
+
+const DASH_DEFAULTS = {
+  trade: {
+    channels: [
+      { name: "Google Business Profile", role: "primary", rationale: "Where 70%+ of local emergency callouts originate." },
+      { name: "Instagram", role: "secondary", rationale: "Before/after work builds trust at thumbnail size." },
+      { name: "Facebook", role: "support", rationale: "Local community groups still drive referrals in trade." },
+    ],
+    kpis: [
+      { label: "Profile views", why: "Local search visibility — the upstream of every callout." },
+      { label: "Direct calls", why: "The number that pays the bills." },
+      { label: "Reviews", why: "Strongest local-pack ranking signal you can move." },
+      { label: "Response time", why: "First to respond wins the job, full stop." },
+    ],
+    contentMix: [
+      { channel: "Google Business Profile", format: "Photo + update", cadence: "weekly" },
+      { channel: "Instagram", format: "Before/after reel", cadence: "weekly" },
+      { channel: "Facebook", format: "Local community post", cadence: "2x-weekly" },
+    ],
+    icp: [
+      { name: "Mid-life homeowner", description: "35-65, owns the property, has had a leak before, values someone reliable over someone cheap." },
+      { name: "Letting agent / landlord", description: "Manages 5-30 properties, needs a trusted go-to for tenant emergencies." },
+    ],
+  },
+  beauty: {
+    channels: [
+      { name: "Instagram", role: "primary", rationale: "Where bookings happen for beauty. Reels + DMs do the heavy lifting." },
+      { name: "Google Business Profile", role: "secondary", rationale: "Walk-up search traffic — underused in beauty, your easiest win." },
+      { name: "Email", role: "support", rationale: "Rebooking lapsed clients is 5x cheaper than acquiring new ones." },
+    ],
+    kpis: [
+      { label: "Reach", why: "First signal that content is landing locally." },
+      { label: "DMs / bookings", why: "Direct conversion in beauty." },
+      { label: "Rebook rate", why: "Existing clients drive 70% of beauty revenue." },
+      { label: "Reviews", why: "Decision driver for first-time bookings." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "Transformation reel", cadence: "2x-weekly" },
+      { channel: "Instagram", format: "BTS story", cadence: "weekly" },
+      { channel: "Google Business Profile", format: "Photo update", cadence: "weekly" },
+      { channel: "Email", format: "Rebooking nudge", cadence: "monthly" },
+    ],
+    icp: [
+      { name: "Local regular", description: "25-55, lives within 3 miles, books every 6-8 weeks once she trusts you." },
+      { name: "Event-driven first-timer", description: "Wedding, milestone birthday, holiday — needs reassurance, picks on reviews + Insta." },
+    ],
+  },
+  restaurant: {
+    channels: [
+      { name: "Google Business Profile", role: "primary", rationale: "Where 'where shall we eat?' actually gets answered." },
+      { name: "Instagram", role: "primary", rationale: "Plate shots and atmosphere — locals follow local restaurants." },
+      { name: "Email", role: "secondary", rationale: "Repeat business is your margin. Monthly note keeps you top of mind." },
+      { name: "TikTok", role: "support", rationale: "Younger diners — chef BTS travels surprisingly far." },
+    ],
+    kpis: [
+      { label: "Profile views", why: "Direct upstream of bookings on a Friday night." },
+      { label: "Bookings", why: "The number that pays the bills." },
+      { label: "Reviews", why: "First-impression trust signal — the majority decide on this." },
+      { label: "Engagement rate", why: "Tells you if your content is actually shareable, or just visible." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "Plate shot", cadence: "2x-weekly" },
+      { channel: "Google Business Profile", format: "Photo + update", cadence: "weekly" },
+      { channel: "TikTok", format: "Chef BTS reel", cadence: "weekly" },
+      { channel: "Email", format: "Monthly newsletter", cadence: "monthly" },
+    ],
+    icp: [
+      { name: "Local diner", description: "Within a 1-mile radius, decides where to eat in 30 seconds on their phone." },
+      { name: "Special-occasion booker", description: "Anniversaries, birthdays, work dinners — books a week ahead, expects a reply within hours." },
+    ],
+  },
+  cafe: {
+    channels: [
+      { name: "Google Business Profile", role: "primary", rationale: "Walk-ups and morning coffee searchers — a 50+ review profile moves you up the local pack." },
+      { name: "Instagram", role: "primary", rationale: "Three-a-week rhythm: drinks, mood, BTS. Locals follow locals." },
+      { name: "Email", role: "support", rationale: "A monthly 'what's new this month' note quietly turns drop-ins into regulars." },
+    ],
+    kpis: [
+      { label: "Profile views", why: "Walk-ups on the way to work — your highest-intent traffic." },
+      { label: "Reach", why: "How many local Instagram users actually saw the cafe this week." },
+      { label: "Reviews", why: "50+ Google reviews moves you out of obscurity in local search." },
+      { label: "Engagement rate", why: "Above 5% means content is genuinely landing with regulars." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "Drinks/food post", cadence: "2x-weekly" },
+      { channel: "Instagram", format: "BTS story", cadence: "weekly" },
+      { channel: "Google Business Profile", format: "Photo + update", cadence: "weekly" },
+      { channel: "Email", format: "Monthly newsletter", cadence: "monthly" },
+    ],
+    icp: [
+      { name: "Daily regular", description: "Lives or works within 5 minutes' walk, 3+ visits a week, defaults to you for routine." },
+      { name: "Weekend wanderer", description: "Picks the best-looking option on Google Maps — judges you on photos and reviews in 10 seconds." },
+    ],
+  },
+  hospo: {
+    channels: [
+      { name: "Google Business Profile", role: "primary", rationale: "Hyper-local searches decide it — daily updates, fast review responses." },
+      { name: "Instagram", role: "secondary", rationale: "Twice weekly. Food, room, the people behind it." },
+      { name: "Email", role: "support", rationale: "Monthly newsletter with a soft offer keeps repeat business healthy." },
+    ],
+    kpis: [
+      { label: "Profile views", why: "Direct upstream of footfall." },
+      { label: "Bookings / orders", why: "The number that pays the bills." },
+      { label: "Reviews", why: "Strongest signal in local food search." },
+      { label: "Engagement rate", why: "Tells you if your content is shareable or just decorative." },
+    ],
+    contentMix: [
+      { channel: "Google Business Profile", format: "Photo + update", cadence: "weekly" },
+      { channel: "Instagram", format: "Food/room post", cadence: "2x-weekly" },
+      { channel: "Email", format: "Monthly newsletter", cadence: "monthly" },
+    ],
+    icp: [
+      { name: "Local resident", description: "Within 1 mile, picks based on Google + Instagram in under 60 seconds." },
+      { name: "Repeat customer", description: "Already loves you — needs a reason to come back this month." },
+    ],
+  },
+  wellness: {
+    channels: [
+      { name: "Instagram", role: "primary", rationale: "Short-form authority video drives bookings — people book the person who's already taught them something." },
+      { name: "Google Business Profile", role: "secondary", rationale: "Most wellness practitioners do nothing here. Easy place to stand out." },
+      { name: "Email", role: "support", rationale: "Monthly note with one practical thing keeps you top of mind for repeat sessions." },
+    ],
+    kpis: [
+      { label: "Reach", why: "Authority content needs to be seen by enough people for trust to build." },
+      { label: "Profile views", why: "Warm leads researching whether you're the right fit." },
+      { label: "Bookings", why: "The number that pays the bills." },
+      { label: "Engagement rate", why: "Above 6% in wellness means your content is genuinely landing." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "Authority tip reel", cadence: "2x-weekly" },
+      { channel: "Google Business Profile", format: "Update + photo", cadence: "weekly" },
+      { channel: "Email", format: "Monthly note", cadence: "monthly" },
+    ],
+    icp: [
+      { name: "Symptom-driven first-timer", description: "Has a specific issue (back pain, sleep, stress), researches for weeks, books once they trust your expertise." },
+      { name: "Wellness-curious regular", description: "Treats sessions as ongoing maintenance — books in blocks, responds to consistency." },
+    ],
+  },
+  creative: {
+    channels: [
+      { name: "Instagram", role: "primary", rationale: "Process content outperforms finished work for visibility — people hire what they see being made." },
+      { name: "LinkedIn", role: "secondary", rationale: "Where business decision-makers actually look for creative partners." },
+      { name: "Email", role: "support", rationale: "Cold outreach + warm referrals — most creatives won't do it, which is why it works." },
+    ],
+    kpis: [
+      { label: "Reach", why: "How many decision-makers actually saw your work this week." },
+      { label: "Profile visits", why: "Warm signal — someone's checking if you're a fit for an upcoming project." },
+      { label: "Enquiries", why: "The number that pays the bills." },
+      { label: "Engagement rate", why: "Tells you if your portfolio is sticky or just visible." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "Process reel", cadence: "2x-weekly" },
+      { channel: "LinkedIn", format: "Case study post", cadence: "weekly" },
+      { channel: "Email", format: "Cold outreach batch", cadence: "weekly" },
+    ],
+    icp: [
+      { name: "Local SME marketing lead", description: "Has budget, knows what they want, judges you on portfolio + responsiveness." },
+      { name: "Repeat client", description: "Worked with you before — comes back if they remember you. Stay visible." },
+    ],
+  },
+  travel: {
+    channels: [
+      { name: "Instagram", role: "primary", rationale: "Trip carousels are the single highest-converting content in travel." },
+      { name: "Email", role: "primary", rationale: "Travel decisions are slow — email keeps you in the conversation for months." },
+      { name: "LinkedIn", role: "support", rationale: "Corporate and high-value clients still search here." },
+    ],
+    kpis: [
+      { label: "Reach", why: "Audience growth in your niche — directly upstream of enquiries." },
+      { label: "Enquiries", why: "The number that pays the bills." },
+      { label: "Repeat / referral rate", why: "Travel runs on word-of-mouth — this is the long game." },
+      { label: "Engagement rate", why: "Tells you if your trip stories are landing or just scrolling past." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "Trip story carousel", cadence: "weekly" },
+      { channel: "Email", format: "Monthly newsletter", cadence: "monthly" },
+      { channel: "LinkedIn", format: "Niche-expertise post", cadence: "weekly" },
+    ],
+    icp: [
+      { name: "Niche traveller", description: "Has a specific kind of trip in mind (honeymoon, multigen, milestone) — wants someone who's done it before." },
+      { name: "Repeat / referral client", description: "Already trusts you — the easiest sale is their next trip or their friend's." },
+    ],
+  },
+  estate: {
+    channels: [
+      { name: "Instagram", role: "primary", rationale: "Property tours + walkthrough reels — vendors notice the agent who shows up consistently." },
+      { name: "Email", role: "primary", rationale: "Monthly local market update keeps you top of mind for the 6-12 month vendor pipeline." },
+      { name: "Google Business Profile", role: "secondary", rationale: "AllAgents + Google reviews are what vendors check before instructing." },
+      { name: "TikTok", role: "support", rationale: "Younger sellers and renters search property here now." },
+    ],
+    kpis: [
+      { label: "Profile views", why: "Vendors checking you out before instructing." },
+      { label: "Valuation requests", why: "Top of the pipeline — directly upstream of instructions." },
+      { label: "Reviews", why: "The trust signal that closes the instruction." },
+      { label: "Listing views", why: "How visible your stock is to active buyers." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "Listing walkthrough reel", cadence: "2x-weekly" },
+      { channel: "Email", format: "Monthly market update", cadence: "monthly" },
+      { channel: "Google Business Profile", format: "Listing update", cadence: "weekly" },
+      { channel: "TikTok", format: "Property tour", cadence: "weekly" },
+    ],
+    icp: [
+      { name: "Considering-vendor", description: "Thinking about selling in the next 6-12 months — needs to see you active in their patch before deciding." },
+      { name: "Active buyer", description: "Browsing weekly, judges shortlist on photos, video, and how quickly you respond." },
+    ],
+  },
+  petcare: {
+    channels: [
+      { name: "Google Business Profile", role: "primary", rationale: "Owners search 'dog walker near me' and pick from the top three." },
+      { name: "Instagram", role: "primary", rationale: "Pack walk content — owners follow local pet accounts religiously." },
+      { name: "Facebook", role: "support", rationale: "Local pet community groups drive a lot of word-of-mouth." },
+    ],
+    kpis: [
+      { label: "Profile views", why: "Direct upstream of new client enquiries." },
+      { label: "DMs / enquiries", why: "The number that pays the bills." },
+      { label: "Reviews", why: "Trust signal for owners letting strangers near their dogs." },
+      { label: "Engagement rate", why: "Pet content travels — high engagement means the dog community knows you." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "Pack walk reel", cadence: "2x-weekly" },
+      { channel: "Google Business Profile", format: "Photo + update", cadence: "weekly" },
+      { channel: "Facebook", format: "Local group post", cadence: "weekly" },
+    ],
+    icp: [
+      { name: "Working dog owner", description: "Out 8-10 hours, needs daily walks, books regular slots once they trust you." },
+      { name: "Holiday client", description: "Books pet-sitting around trips — referrals from regulars are gold." },
+    ],
+  },
+  retail: {
+    channels: [
+      { name: "Instagram", role: "primary", rationale: "Personality-driven content beats polished brand — three short posts a week." },
+      { name: "Google Business Profile", role: "secondary", rationale: "Tourists and new locals search here — most independents have nothing." },
+      { name: "Email", role: "support", rationale: "Quietly the most profitable channel a shop has, and almost no one uses it well." },
+    ],
+    kpis: [
+      { label: "Profile views", why: "Discovery — locals and tourists deciding if you're worth a visit." },
+      { label: "Footfall", why: "The number that pays the bills (online sales are a bonus)." },
+      { label: "Reviews", why: "Independent shops live or die on personality reviews." },
+      { label: "Email subscribers", why: "Your most loyal customers — and the most profitable channel you've got." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "New-in reel", cadence: "weekly" },
+      { channel: "Instagram", format: "BTS post", cadence: "weekly" },
+      { channel: "Google Business Profile", format: "Photo + update", cadence: "weekly" },
+      { channel: "Email", format: "Monthly newsletter", cadence: "monthly" },
+    ],
+    icp: [
+      { name: "Loyal local", description: "Comes in monthly, knows your name, joins your email list — the heart of the business." },
+      { name: "Discovery shopper", description: "Tourist or new resident — picks based on Google photos and Instagram personality." },
+    ],
+  },
+  legal: {
+    channels: [
+      { name: "Google Business Profile", role: "primary", rationale: "Clients Google a problem at 11pm and pick the firm that looks most credible in 30 seconds." },
+      { name: "LinkedIn", role: "primary", rationale: "Where professional referrers (accountants, IFAs) actually pay attention to you." },
+      { name: "Email", role: "support", rationale: "Quarterly referrer check-ins generate 80% of the work in many specialisms." },
+    ],
+    kpis: [
+      { label: "Profile views", why: "First-impression trust signal during the late-night search." },
+      { label: "Enquiries", why: "The number that pays the bills." },
+      { label: "Reviews", why: "Substance over volume — five recent professional reviews close cases." },
+      { label: "Referrer engagement", why: "Long-term — most legal work comes from professional referrers." },
+    ],
+    contentMix: [
+      { channel: "LinkedIn", format: "Practical Q&A post", cadence: "weekly" },
+      { channel: "Google Business Profile", format: "Update + photo", cadence: "monthly" },
+      { channel: "Email", format: "Quarterly referrer note", cadence: "monthly" },
+    ],
+    icp: [
+      { name: "Stressed first-time client", description: "Late-night Google searcher with a real problem — judges credibility in 30 seconds." },
+      { name: "Professional referrer", description: "Accountant, IFA, mortgage broker — sends you work if you stay on their radar." },
+    ],
+  },
+  cars: {
+    channels: [
+      { name: "Instagram", role: "primary", rationale: "Stock reels — buyers research for weeks before walking in, give them what they need." },
+      { name: "Google Business Profile", role: "primary", rationale: "100+ Google reviews can lift conversion by 20%+ in used cars." },
+      { name: "Email", role: "support", rationale: "Most enquiries buy 4-8 weeks later — follow-up sequences recover serious revenue." },
+    ],
+    kpis: [
+      { label: "Listing views", why: "How many serious buyers are seeing your stock." },
+      { label: "Enquiries", why: "The number that pays the bills." },
+      { label: "Reviews", why: "100+ Google reviews is a 20%+ conversion lift in used cars." },
+      { label: "Lead recovery rate", why: "% of cold enquiries that convert weeks later — pure margin." },
+    ],
+    contentMix: [
+      { channel: "Instagram", format: "Stock reel", cadence: "2x-weekly" },
+      { channel: "Google Business Profile", format: "Photo + update", cadence: "weekly" },
+      { channel: "Email", format: "Follow-up sequence", cadence: "weekly" },
+    ],
+    icp: [
+      { name: "Researching buyer", description: "Has been looking for 3-6 weeks, knows what they want, decides on photos and reviews." },
+      { name: "Cold lead", description: "Enquired weeks ago and went quiet — recoverable with the right follow-up cadence." },
+    ],
+  },
+  service: {
+    channels: [
+      { name: "Google Business Profile", role: "primary", rationale: "Highest-leverage channel for any local service business — weekly updates and reviews compound." },
+      { name: "Instagram", role: "secondary", rationale: "Authority and trust content — twice a week is plenty." },
+      { name: "Email", role: "support", rationale: "Past customers are your warmest pipeline." },
+    ],
+    kpis: [
+      { label: "Profile views", why: "Local discoverability — the upstream of everything." },
+      { label: "Enquiries", why: "The number that pays the bills." },
+      { label: "Response time", why: "First to respond wins more often than not." },
+      { label: "Reviews", why: "Local-pack ranking + first-impression trust signal." },
+    ],
+    contentMix: [
+      { channel: "Google Business Profile", format: "Update + photo", cadence: "weekly" },
+      { channel: "Instagram", format: "Authority post", cadence: "weekly" },
+      { channel: "Email", format: "Past-customer note", cadence: "monthly" },
+    ],
+    icp: [
+      { name: "Local searcher", description: "Found you by Googling the service + town. Decides on first impressions in 30 seconds." },
+      { name: "Past customer", description: "Already hired you once — 5x more likely to hire again than a stranger." },
+    ],
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Mock dashboard data generator — deterministic, seeded by business.
+   Same business → same numbers (good for demo replay).
+   Different business → different numbers in plausible per-industry bands.
+   Channel breakdown + calendar are driven by the strategy object.
+   ───────────────────────────────────────────────────────────────────────── */
+
+function fnv1a(str) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function makeRng(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6D2B79F5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const between = (rand, min, max) => Math.floor(min + rand() * (max - min));
+
+const BANDS = {
+  trade:      { reach: [800, 2200],   profileViews: [80, 220],   enquiries: [8, 18],   reviews: [4.7, 4.95], engagement: [3.5, 6.5] },
+  beauty:     { reach: [3500, 9000],  profileViews: [200, 600],  enquiries: [25, 60],  reviews: [4.8, 5.0],  engagement: [5.5, 9.0] },
+  restaurant: { reach: [4000, 12000], profileViews: [400, 1200], enquiries: [30, 80],  reviews: [4.5, 4.85], engagement: [4.5, 7.5] },
+  cafe:       { reach: [2500, 7000],  profileViews: [180, 500],  enquiries: [10, 30],  reviews: [4.6, 4.9],  engagement: [5.0, 8.0] },
+  hospo:      { reach: [3000, 8000],  profileViews: [250, 700],  enquiries: [20, 55],  reviews: [4.5, 4.85], engagement: [4.5, 7.0] },
+  wellness:   { reach: [1500, 4500],  profileViews: [120, 400],  enquiries: [12, 35],  reviews: [4.8, 5.0],  engagement: [6.0, 10.0] },
+  creative:   { reach: [800, 3000],   profileViews: [60, 220],   enquiries: [4, 14],   reviews: [4.9, 5.0],  engagement: [4.5, 8.0] },
+  travel:     { reach: [1200, 4000],  profileViews: [80, 280],   enquiries: [6, 18],   reviews: [4.85, 5.0], engagement: [5.5, 9.0] },
+  estate:     { reach: [2000, 6500],  profileViews: [180, 550],  enquiries: [15, 40],  reviews: [4.6, 4.9],  engagement: [4.0, 7.0] },
+  petcare:    { reach: [1000, 3500],  profileViews: [70, 240],   enquiries: [6, 20],   reviews: [4.85, 5.0], engagement: [6.5, 10.5] },
+  retail:     { reach: [1800, 5500],  profileViews: [140, 450],  enquiries: [10, 30],  reviews: [4.7, 4.95], engagement: [4.5, 7.5] },
+  legal:      { reach: [400, 1500],   profileViews: [40, 150],   enquiries: [5, 15],   reviews: [4.7, 4.95], engagement: [3.0, 5.5] },
+  cars:       { reach: [2500, 7000],  profileViews: [300, 900],  enquiries: [20, 60],  reviews: [4.4, 4.8],  engagement: [3.5, 6.5] },
+  service:    { reach: [800, 2500],   profileViews: [80, 250],   enquiries: [6, 18],   reviews: [4.7, 4.9],  engagement: [4.5, 7.5] },
+};
+
+const fmtN = (n) => n.toLocaleString("en-GB");
+const fmtPct = (n) => `${n.toFixed(1)}%`;
+
+const TITLE_POOL = {
+  "Photo + update":          ["Weekly update", "New photos", "What's new this week"],
+  "Update + photo":          ["Weekly update", "New photos", "What's new this week"],
+  "Photo update":            ["10 fresh photos", "Behind the scenes", "Latest work"],
+  "Before/after reel":       ["Transformation", "Before & after", "Real job, real result"],
+  "Transformation reel":     ["Transformation", "Client glow-up", "Before & after"],
+  "BTS story":               ["Behind the scenes", "Day in the life", "Process"],
+  "BTS post":                ["Behind the scenes", "Day in the life", "Meet the team"],
+  "Authority post":          ["Quick tip", "What I'd tell a new client", "One thing most miss"],
+  "Authority tip reel":      ["One-minute tip", "Quick teach", "Common mistake fix"],
+  "Local community post":    ["Local shout-out", "Community moment", "Helping a neighbour"],
+  "Rebooking nudge":         ["Rebooking reminder", "We miss you", "Time for your next visit"],
+  "Past-customer note":      ["Quick check-in", "What's new this month", "Thank you note"],
+  "Monthly newsletter":      ["Monthly note", "What's on this month", "From the team"],
+  "Plate shot":              ["Tonight's special", "Today on the menu", "New dish"],
+  "Food/room post":          ["Tonight's plate", "Room shot", "Behind the pass"],
+  "Drinks/food post":        ["Today's drink", "On the menu", "Fresh in"],
+  "Chef BTS reel":           ["Chef's at it", "Behind the pass", "Plate of the day"],
+  "Process reel":            ["How it gets made", "Process moment", "BTS this week"],
+  "Case study post":         ["Recent project", "Client win", "How we approached it"],
+  "Cold outreach batch":     ["Outreach batch", "5 new pitches", "Personalised reach-outs"],
+  "Trip story carousel":     ["Recent trip story", "Client itinerary", "Trip highlights"],
+  "Niche-expertise post":    ["Niche insight", "What I've learned", "Specialism spotlight"],
+  "Listing walkthrough reel": ["New listing tour", "Walkthrough", "Just listed"],
+  "Listing update":          ["New listings", "Just listed", "Coming soon"],
+  "Property tour":           ["Property tour", "Walkthrough", "New listing"],
+  "Monthly market update":   ["Market update", "This month locally", "Sold + listed"],
+  "Pack walk reel":          ["Today's pack", "Pack walk", "Out with the dogs"],
+  "Local group post":        ["Local pet community", "Slots opening", "New clients welcome"],
+  "New-in reel":             ["New in this week", "Fresh stock", "Just landed"],
+  "Stock reel":              ["New arrival", "Just in", "Fresh stock"],
+  "Practical Q&A post":      ["Common question", "What clients ask me", "Practical answer"],
+  "Quarterly referrer note": ["Quarterly note", "Catching up", "Three things this quarter"],
+  "Follow-up sequence":      ["Still looking?", "Worth a fresh look?", "Update from us"],
+};
+
+const CADENCE_INTERVAL = { weekly: 7, "2x-weekly": 3, monthly: 28 };
+
+function generateDashboardData(strategy) {
+  const seedStr = `${strategy.business.what || ""}|${strategy.business.where || ""}|${strategy.business.industry}`;
+  const seed = fnv1a(seedStr);
+  const rand = makeRng(seed);
+  const band = BANDS[strategy.business.industry] || BANDS.service;
+
+  const reach = between(rand, band.reach[0], band.reach[1]);
+  const profileViews = between(rand, band.profileViews[0], band.profileViews[1]);
+  const enquiries = between(rand, band.enquiries[0], band.enquiries[1]);
+  const reviews = (band.reviews[0] + rand() * (band.reviews[1] - band.reviews[0])).toFixed(1);
+  const engagement = (band.engagement[0] + rand() * (band.engagement[1] - band.engagement[0])).toFixed(1);
+  const conversionRate = ((enquiries / Math.max(profileViews, 1)) * 100).toFixed(1);
+
+  const delta = (positiveBias = 0.85) => {
+    const isPositive = rand() < positiveBias;
+    const magnitude = between(rand, 8, 28);
+    return { value: `${isPositive ? "+" : "-"}${magnitude}%`, positive: isPositive };
+  };
+
+  const reachDelta = delta();
+  const profileDelta = delta();
+  const enquiriesDelta = delta(0.9);
+  const engagementDelta = delta();
+
+  // KPI cards — driven by strategy.kpis
+  const kpiCards = strategy.kpis.map((k) => {
+    const label = k.label.toLowerCase();
+    let value, deltaObj;
+    if (label.includes("reach")) { value = fmtN(reach); deltaObj = reachDelta; }
+    else if (label.includes("profile")) { value = fmtN(profileViews); deltaObj = profileDelta; }
+    else if (label.includes("listing view")) { value = fmtN(Math.floor(reach * 0.6)); deltaObj = reachDelta; }
+    else if (label.includes("enquir") || label.includes("dm") || label.includes("call") || label.includes("booking") || label.includes("valuation") || label.includes("footfall")) {
+      value = fmtN(enquiries); deltaObj = enquiriesDelta;
+    }
+    else if (label.includes("review")) { value = String(reviews); deltaObj = { value: `${between(rand, 1, 5)} new`, positive: true }; }
+    else if (label.includes("engagement")) { value = fmtPct(parseFloat(engagement)); deltaObj = engagementDelta; }
+    else if (label.includes("response time")) { value = `${between(rand, 12, 90)}min`; deltaObj = { value: "-15%", positive: true }; }
+    else if (label.includes("rebook")) { value = `${between(rand, 55, 78)}%`; deltaObj = { value: "+4pp", positive: true }; }
+    else if (label.includes("conversion")) { value = fmtPct(parseFloat(conversionRate)); deltaObj = { value: "+1.2pp", positive: true }; }
+    else if (label.includes("referrer")) { value = fmtN(between(rand, 8, 24)); deltaObj = { value: "+3", positive: true }; }
+    else if (label.includes("repeat") || label.includes("referral rate")) { value = `${between(rand, 28, 48)}%`; deltaObj = { value: "+5pp", positive: true }; }
+    else if (label.includes("recovery")) { value = `${between(rand, 12, 22)}%`; deltaObj = { value: "+3pp", positive: true }; }
+    else if (label.includes("subscriber")) { value = fmtN(between(rand, 200, 800)); deltaObj = { value: `+${between(rand, 12, 35)}`, positive: true }; }
+    else { value = fmtN(between(rand, 100, 1000)); deltaObj = delta(); }
+
+    return {
+      label: k.label,
+      value,
+      delta: deltaObj.value,
+      deltaPositive: deltaObj.positive,
+      tooltip: k.why,
+      why: k.why,
+    };
+  });
+
+  // Channel breakdown — proportional to role
+  const channelBreakdown = strategy.channels.map((ch) => {
+    const roleMultiplier = ch.role === "primary" ? 0.5 : ch.role === "secondary" ? 0.3 : 0.15;
+    return {
+      name: ch.name,
+      role: ch.role,
+      reach: fmtN(Math.floor(reach * roleMultiplier * (0.85 + rand() * 0.3))),
+      posts: between(rand, 4, 14),
+      engagement: fmtPct(parseFloat(engagement) * (0.85 + rand() * 0.3)),
+      rationale: ch.rationale,
+    };
+  });
+
+  // Calendar — driven by strategy.contentMix
+  const today = new Date();
+  const month = today.getMonth();
+  const year = today.getFullYear();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const calendar = {};
+
+  let cursor = today.getDate();
+  for (const item of strategy.contentMix) {
+    const interval = CADENCE_INTERVAL[item.cadence] || 7;
+    let day = cursor + between(rand, 1, 4);
+    while (day <= daysInMonth) {
+      const titles = TITLE_POOL[item.format] || [item.format];
+      // Shorten "Google Business Profile" → "Google" for the calendar pill
+      const channelShort = item.channel === "Google Business Profile" ? "Google" : item.channel;
+      calendar[day] = {
+        channel: channelShort,
+        title: titles[Math.floor(rand() * titles.length)],
+        format: item.format,
+      };
+      day += interval;
+    }
+    cursor += 2;
+  }
+
+  // 12-week trend — gentle upward, occasional dip
+  const trend = [];
+  let baseTrend = reach * 0.55;
+  for (let w = 0; w < 12; w++) {
+    baseTrend = baseTrend * (1 + (rand() * 0.12 - 0.03));
+    trend.push(Math.floor(baseTrend));
+  }
+
+  // Funnel
+  const impressions = Math.floor(reach * (1.4 + rand() * 0.4));
+  const funnel = [
+    { stage: "Impressions", value: fmtN(impressions) },
+    { stage: "Reach", value: fmtN(reach) },
+    { stage: "Profile views", value: fmtN(profileViews) },
+    { stage: "Enquiries", value: fmtN(enquiries) },
+    { stage: "Booked / quoted", value: fmtN(Math.floor(enquiries * (0.4 + rand() * 0.25))) },
+  ];
+
+  return {
+    headline: {
+      reach: { value: fmtN(reach), delta: reachDelta },
+      profileViews: { value: fmtN(profileViews), delta: profileDelta },
+      enquiries: { value: fmtN(enquiries), delta: enquiriesDelta },
+      reviews: { value: String(reviews), newCount: between(rand, 1, 5) },
+    },
+    kpiCards,
+    channelBreakdown,
+    calendar,
+    trend,
+    funnel,
+    icp: strategy.icp,
+  };
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Local fallback strategy builder — used if /api/strategy fails so the
+   demo never breaks. Builds from templates without the LLM personalisation.
+   ───────────────────────────────────────────────────────────────────────── */
+
+function buildFallbackStrategy(profile) {
+  const combined = [profile.what, profile.who, profile.currentMarketing, profile.goal]
+    .filter(Boolean).join(" ");
+  const industry = detectIndustry([combined]);
+  const template = STRATEGY_BY_INDUSTRY[industry] || STRATEGY_BY_INDUSTRY.service;
+  const dash = DASH_DEFAULTS[industry] || DASH_DEFAULTS.service;
+
+  return {
+    business: { ...profile, industry },
+    diagnosis: template.diagnosis,
+    pillars: template.pillars,
+    quickWins: template.quickWins,
+    channels: dash.channels,
+    kpis: dash.kpis,
+    contentMix: dash.contentMix,
+    icp: dash.icp,
+    ninetyDayPriorities: [
+      { month: 1, focus: "Set up the foundations — Google Business Profile, basic content cadence, review-asking system." },
+      { month: 2, focus: "Hit consistency — content shipping reliably each week, response times under 2 hours." },
+      { month: 3, focus: "Optimise — double down on what's working, kill what isn't, plan the next quarter." },
+    ],
+  };
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   useStreamedText hook + MateMessage — typewriter effect, unchanged
    ───────────────────────────────────────────────────────────────────────── */
 
 function useStreamedText(target, speedMs = 14, active = true) {
@@ -405,18 +865,27 @@ function MateMessage({ text, speedMs = 14, onDone, instant = false }) {
    ───────────────────────────────────────────────────────────────────────── */
 
 export default function DemoPage() {
-  // Gate state: 'locked' | 'unlocked'
+  // Gate state: 'checking' | 'locked' | 'unlocked'
   const [gate, setGate] = useState("checking");
 
   // Portal: 'boot' | 'chat' | 'loading-strategy' | 'strategy' | 'loading-dashboard' | 'dashboard'
   const [portal, setPortal] = useState("boot");
 
   const [messages, setMessages] = useState([]);
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const [followupActive, setFollowupActive] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [mateThinking, setMateThinking] = useState(false);
-  const [answers, setAnswers] = useState([]);
+
+  // Adaptive chat state
+  const [profile, setProfile] = useState({
+    what: null, who: null, where: null,
+    currentMarketing: null, goal: null,
+  });
+  const [questionsAsked, setQuestionsAsked] = useState(0);
+  const [chatComplete, setChatComplete] = useState(false);
+
+  // Strategy + dashboard data are now FETCHED, not derived
+  const [strategy, setStrategy] = useState(null);
+  const [dashData, setDashData] = useState(null);
 
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
@@ -424,10 +893,7 @@ export default function DemoPage() {
 
   const [panelOpen, setPanelOpen] = useState(false);
 
-  /* Check session storage for unlock — wrapped in try/catch because some
-     sandboxed environments (incognito with strict settings, in-app browsers,
-     embedded previews) block storage APIs and would otherwise leave the
-     gate stuck on "checking". */
+  /* Check session storage for unlock */
   useEffect(() => {
     let unlocked = false;
     try {
@@ -443,10 +909,22 @@ export default function DemoPage() {
   /* Initial Mate message when chat portal opens */
   useEffect(() => {
     if (portal === "chat" && messages.length === 0) {
-      setMessages([{ from: "mate", text: SCRIPT[0].ask, key: "intro" }]);
+      setMessages([{
+        from: "mate",
+        text: "Right, before we get into anything — tell me about the business. What do you do, and where are you based?",
+        key: "intro",
+      }]);
+      setQuestionsAsked(1);
       setTimeout(() => inputRef.current?.focus(), 600);
     }
   }, [portal, messages.length]);
+
+  /* When loading-strategy is showing and strategy arrives late, transition */
+  useEffect(() => {
+    if (portal === "loading-strategy" && strategy) {
+      setPortal("strategy");
+    }
+  }, [portal, strategy]);
 
   /* Auto-scroll within chat */
   useEffect(() => {
@@ -463,44 +941,87 @@ export default function DemoPage() {
     setFollowingScroll(distanceFromBottom < 80);
   };
 
-  /* Send a message */
+  /* Adaptive chat — calls /api/chat each turn */
   const handleSend = async () => {
     const text = userInput.trim();
-    if (!text || mateThinking || portal !== "chat") return;
+    if (!text || mateThinking || portal !== "chat" || chatComplete) return;
 
-    const newAnswers = [...answers, text];
-    setAnswers(newAnswers);
     setUserInput("");
 
+    const historyForApi = [
+      ...messages.map((m) => ({ from: m.from, text: m.text })),
+      { from: "user", text },
+    ];
     setMessages((m) => [...m, { from: "user", text, key: `u-${m.length}` }]);
 
     setMateThinking(true);
-    await new Promise((r) => setTimeout(r, 700 + Math.random() * 600));
-    setMateThinking(false);
 
-    const currentQ = SCRIPT[questionIndex];
-    const shouldFollowup = !followupActive && currentQ.followup && currentQ.followup.condition(text);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ history: historyForApi, questionsAsked }),
+      });
+      if (!res.ok) throw new Error(`chat api ${res.status}`);
+      const data = await res.json();
 
-    if (shouldFollowup) {
-      setMessages((m) => [...m, { from: "mate", text: currentQ.followup.ask, key: `m-fu-${m.length}` }]);
-      setFollowupActive(true);
-      return;
-    }
+      // Merge any newly extracted profile fields (don't overwrite with null)
+      let nextProfile = profile;
+      if (data.extracted) {
+        nextProfile = {
+          what: data.extracted.what || profile.what,
+          who: data.extracted.who || profile.who,
+          where: data.extracted.where || profile.where,
+          currentMarketing: data.extracted.currentMarketing || profile.currentMarketing,
+          goal: data.extracted.goal || profile.goal,
+        };
+        setProfile(nextProfile);
+      }
 
-    const replyText = followupActive ? currentQ.followup.reply(text) : currentQ.reply(text);
-    setMessages((m) => [...m, { from: "mate", text: replyText, key: `m-r-${m.length}` }]);
+      // Natural pause before reply
+      await new Promise((r) => setTimeout(r, 500 + Math.random() * 400));
+      setMateThinking(false);
 
-    await new Promise((r) => setTimeout(r, replyText.length * 14 + 600));
+      if (data.decision === "ask_next") {
+        if (data.ack) {
+          setMessages((m) => [...m, { from: "mate", text: data.ack, key: `m-ack-${m.length}` }]);
+          await new Promise((r) => setTimeout(r, data.ack.length * 14 + 400));
+        }
+        setMessages((m) => [...m, { from: "mate", text: data.question, key: `m-q-${m.length}` }]);
+        setQuestionsAsked((n) => n + 1);
+      } else {
+        // have_enough — close the chat and start strategy generation
+        const closing = data.closing || "Right — give me a moment, putting something together.";
+        setMessages((m) => [...m, { from: "mate", text: closing, key: `m-close-${m.length}` }]);
+        setChatComplete(true);
 
-    setFollowupActive(false);
-
-    if (questionIndex < SCRIPT.length - 1) {
-      const nextQ = SCRIPT[questionIndex + 1];
-      setMessages((m) => [...m, { from: "mate", text: nextQ.ask, key: `m-q-${m.length}` }]);
-      setQuestionIndex((i) => i + 1);
-    } else {
-      // Done — go to loading screen, then strategy
-      setTimeout(() => setPortal("loading-strategy"), 1200);
+        // Fire strategy fetch + transition to loading screen
+        setTimeout(async () => {
+          setPortal("loading-strategy");
+          try {
+            const stratRes = await fetch("/api/strategy", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ profile: nextProfile }),
+            });
+            if (!stratRes.ok) throw new Error(`strategy api ${stratRes.status}`);
+            const strat = await stratRes.json();
+            setStrategy(strat);
+          } catch (err) {
+            // API failed — use deterministic fallback so demo never breaks
+            console.warn("[strategy] api failed, using fallback:", err);
+            setStrategy(buildFallbackStrategy(nextProfile));
+          }
+        }, 1400);
+      }
+    } catch (err) {
+      console.warn("[chat] api error:", err);
+      setMateThinking(false);
+      setMessages((m) => [...m, {
+        from: "mate",
+        text: "Lost my connection for a second — could you say that again?",
+        key: `m-err-${m.length}`,
+      }]);
     }
   };
 
@@ -516,34 +1037,75 @@ export default function DemoPage() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [portal]);
+  }, [portal, strategy]);
 
-  const skipAhead = () => {
+  const skipAhead = async () => {
     if (portal === "boot") {
       setPortal("chat");
-    } else if (portal === "chat") {
-      const placeholders = [
-        "Family-run plumbing business in Buckinghamshire, mostly emergency callouts, been at it 15 years.",
-        "Mostly homeowners, 35-65, anyone who's had a leak at 11pm on a Sunday.",
-        "Bit of word-of-mouth, a tired website, some Facebook posts. Honestly, not really, no.",
-        "Probably £150-200 a week extra. Over a year that's a holiday and then some.",
-      ];
-      setAnswers(placeholders);
-      setTimeout(() => setPortal("loading-strategy"), 200);
-    } else if (portal === "loading-strategy") {
-      setPortal("strategy");
-    } else if (portal === "strategy") {
+      return;
+    }
+    if (portal === "chat") {
+      const seededProfile = {
+        what: "Family-run plumbing business doing emergency callouts and boiler servicing",
+        who: "Local homeowners, mostly 35-65, who've had a leak before",
+        where: "Buckinghamshire",
+        currentMarketing: "A bit of word-of-mouth and a tired website. Some Facebook posts. Honestly nothing's really working.",
+        goal: "One extra customer a week — about £150-200 a week, holiday and then some over a year",
+      };
+      setProfile(seededProfile);
+      setChatComplete(true);
+      setPortal("loading-strategy");
+
+      try {
+        const stratRes = await fetch("/api/strategy", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ profile: seededProfile }),
+        });
+        if (!stratRes.ok) throw new Error(`strategy api ${stratRes.status}`);
+        const strat = await stratRes.json();
+        setStrategy(strat);
+      } catch (err) {
+        setStrategy(buildFallbackStrategy(seededProfile));
+      }
+      return;
+    }
+    if (portal === "loading-strategy") {
+      if (strategy) setPortal("strategy");
+      return;
+    }
+    if (portal === "strategy") {
+      const data = generateDashboardData(strategy);
+      setDashData(data);
       setPortal("loading-dashboard");
-    } else if (portal === "loading-dashboard") {
+      return;
+    }
+    if (portal === "loading-dashboard") {
       setPortal("dashboard");
     }
   };
 
-  const goTo = (p) => setPortal(p);
-
-  const industry = useMemo(() => detectIndustry(answers), [answers]);
-  const location = useMemo(() => detectLocation(answers), [answers]);
-  const strategy = STRATEGY_BY_INDUSTRY[industry] || STRATEGY_BY_INDUSTRY.service;
+  const goTo = (p) => {
+    // Jumping to strategy/dashboard requires data — seed if missing
+    if ((p === "strategy" || p === "loading-dashboard" || p === "dashboard") && !strategy) {
+      const seededProfile = {
+        what: "Family-run plumbing business doing emergency callouts and boiler servicing",
+        who: "Local homeowners, mostly 35-65, who've had a leak before",
+        where: "Buckinghamshire",
+        currentMarketing: "A bit of word-of-mouth, tired website, some Facebook posts.",
+        goal: "One extra customer a week",
+      };
+      const fallback = buildFallbackStrategy(seededProfile);
+      setStrategy(fallback);
+      setProfile(seededProfile);
+      if (p === "dashboard" || p === "loading-dashboard") {
+        setDashData(generateDashboardData(fallback));
+      }
+    } else if ((p === "loading-dashboard" || p === "dashboard") && !dashData && strategy) {
+      setDashData(generateDashboardData(strategy));
+    }
+    setPortal(p);
+  };
 
   /* ─── If gate not unlocked, show the gate ─── */
   if (gate === "checking") {
@@ -568,9 +1130,7 @@ export default function DemoPage() {
         <PasswordGate onUnlock={() => {
           try {
             sessionStorage.setItem(STORAGE_KEY, "1");
-          } catch (e) {
-            // storage blocked — gate will simply re-prompt next visit, which is fine
-          }
+          } catch (e) {}
           setGate("unlocked");
         }} />
       </>
@@ -629,16 +1189,23 @@ export default function DemoPage() {
               { label: "Identifying quick wins", duration: 800 },
               { label: "Drafting recommendations", duration: 1000 },
             ]}
-            onDone={() => setPortal("strategy")}
+            // Wait for strategy to load before transitioning
+            onDone={() => {
+              if (strategy) setPortal("strategy");
+              // else: a useEffect below will transition once strategy arrives
+            }}
           />
         )}
 
-        {portal === "strategy" && (
+        {portal === "strategy" && strategy && (
           <StrategyPortal
             key="strategy"
             strategy={strategy}
-            location={location}
-            onContinue={() => setPortal("loading-dashboard")}
+            onContinue={() => {
+              const data = generateDashboardData(strategy);
+              setDashData(data);
+              setPortal("loading-dashboard");
+            }}
           />
         )}
 
@@ -657,12 +1224,11 @@ export default function DemoPage() {
           />
         )}
 
-        {portal === "dashboard" && (
+        {portal === "dashboard" && dashData && strategy && (
           <DashboardPortal
             key="dashboard"
-            industry={industry}
-            location={location}
-            answers={answers}
+            strategy={strategy}
+            dashData={dashData}
           />
         )}
       </AnimatePresence>
@@ -671,7 +1237,7 @@ export default function DemoPage() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   PASSWORD GATE
+   PASSWORD GATE — unchanged
    ───────────────────────────────────────────────────────────────────────── */
 
 function PasswordGate({ onUnlock }) {
@@ -816,14 +1382,10 @@ function PasswordGate({ onUnlock }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   LOADING SCREEN
-   Steps tick through one by one. Last step holds until duration elapses,
-   then onDone fires.
+   LOADING SCREEN — unchanged
    ───────────────────────────────────────────────────────────────────────── */
 
 function LoadingScreen({ title, steps, onDone }) {
-  // Normalise steps: each becomes { label, duration }.
-  // Strings get a default duration; objects pass through.
   const normalisedSteps = steps.map((s) =>
     typeof s === "string" ? { label: s, duration: 600 } : s
   );
@@ -836,7 +1398,6 @@ function LoadingScreen({ title, steps, onDone }) {
     let elapsed = 0;
 
     normalisedSteps.forEach((step, i) => {
-      // Mark this step as active when the previous step's duration has passed
       timers.push(setTimeout(() => {
         if (i > 0) setCompleted((c) => [...c, i - 1]);
         setActiveStep(i);
@@ -844,12 +1405,10 @@ function LoadingScreen({ title, steps, onDone }) {
       elapsed += step.duration;
     });
 
-    // Mark final step complete just before finishing
     timers.push(setTimeout(() => {
       setCompleted(normalisedSteps.map((_, i) => i));
     }, elapsed - 250));
 
-    // Total duration finishes
     timers.push(setTimeout(onDone, elapsed));
 
     return () => timers.forEach(clearTimeout);
@@ -869,7 +1428,6 @@ function LoadingScreen({ title, steps, onDone }) {
         background: "var(--bg)", padding: 24,
       }}
     >
-      {/* Spinning orbit animation */}
       <div className="orbit-wrap">
         <div className="orbit-core" />
         <div className="orbit-ring orbit-ring-1" />
@@ -907,9 +1465,7 @@ function LoadingScreen({ title, steps, onDone }) {
           return (
             <motion.div
               key={i}
-              animate={{
-                opacity: isPending ? 0.32 : 1,
-              }}
+              animate={{ opacity: isPending ? 0.32 : 1 }}
               transition={{ duration: 0.4 }}
               style={{
                 display: "flex", alignItems: "center", gap: 12,
@@ -918,7 +1474,6 @@ function LoadingScreen({ title, steps, onDone }) {
                 fontWeight: isActive ? 600 : 500,
               }}
             >
-              {/* Status icon */}
               <div style={{
                 width: 16, height: 16, flexShrink: 0,
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -970,7 +1525,7 @@ function LoadingScreen({ title, steps, onDone }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   BOOT SCREEN
+   BOOT SCREEN — unchanged
    ───────────────────────────────────────────────────────────────────────── */
 
 function BootScreen({ onBegin }) {
@@ -1057,7 +1612,7 @@ function BootScreen({ onBegin }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   CHAT PORTAL
+   CHAT PORTAL — unchanged
    ───────────────────────────────────────────────────────────────────────── */
 
 function ChatPortal({
@@ -1145,10 +1700,12 @@ function ChatPortal({
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   STRATEGY PORTAL
+   STRATEGY PORTAL — rebuilt to consume the new schema.
+   Adds Channels, ICP, and 90-day priorities sections.
    ───────────────────────────────────────────────────────────────────────── */
 
-function StrategyPortal({ strategy, location, onContinue }) {
+function StrategyPortal({ strategy, onContinue }) {
+  const location = strategy.business.where;
   return (
     <motion.div
       initial={{ opacity: 0, scale: 1.04 }}
@@ -1159,13 +1716,14 @@ function StrategyPortal({ strategy, location, onContinue }) {
       style={{ overflowY: "auto" }}
     >
       <div style={{ maxWidth: 800, margin: "0 auto", padding: "100px 40px 120px" }}>
+
+        {/* HEADER + DIAGNOSIS */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25, duration: 0.6 }}
         >
           <span className="eyebrow">strategy · draft 1</span>
-
           <h1 className="fh" style={{
             fontSize: "clamp(32px, 5vw, 56px)",
             fontWeight: 900, letterSpacing: "-0.045em",
@@ -1174,7 +1732,6 @@ function StrategyPortal({ strategy, location, onContinue }) {
           }}>
             Here's where I'd start{location ? <> for <span style={{ color: "var(--o)" }}>{location}</span></> : ""}.
           </h1>
-
           <p className="fb" style={{
             fontSize: 17, color: "var(--d-soft)",
             lineHeight: 1.65, marginBottom: 44,
@@ -1183,6 +1740,7 @@ function StrategyPortal({ strategy, location, onContinue }) {
           </p>
         </motion.div>
 
+        {/* PILLARS */}
         {strategy.pillars.map((p, i) => (
           <motion.div
             key={i}
@@ -1204,12 +1762,104 @@ function StrategyPortal({ strategy, location, onContinue }) {
           </motion.div>
         ))}
 
+        {/* CHANNELS */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4, duration: 0.6 }}
+          transition={{ delay: 1.2, duration: 0.5 }}
+          style={{ marginTop: 36, paddingTop: 28, borderTop: "1px dashed var(--line)" }}
+        >
+          <h2 className="fh" style={{
+            fontSize: 22, fontWeight: 900, letterSpacing: "-0.03em",
+            color: "var(--d)", marginBottom: 18,
+          }}>
+            Where to show up
+          </h2>
+          {strategy.channels.map((ch, i) => (
+            <div key={i} style={{
+              padding: "14px 0",
+              borderBottom: i < strategy.channels.length - 1 ? "1px dashed var(--line)" : "none",
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+                <span className="fh" style={{ fontSize: 16, fontWeight: 800, color: "var(--d)" }}>{ch.name}</span>
+                <span style={{
+                  fontSize: 10, fontWeight: 700,
+                  color: ch.role === "primary" ? "var(--o)" : "var(--d-soft)",
+                  letterSpacing: "0.08em", textTransform: "uppercase",
+                }}>{ch.role}</span>
+              </div>
+              <p className="fb" style={{
+                fontSize: 14, color: "var(--d-soft)",
+                lineHeight: 1.55, margin: 0,
+              }}>{ch.rationale}</p>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* ICP */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.4, duration: 0.5 }}
+          style={{ marginTop: 36, paddingTop: 28, borderTop: "1px dashed var(--line)" }}
+        >
+          <h2 className="fh" style={{
+            fontSize: 22, fontWeight: 900, letterSpacing: "-0.03em",
+            color: "var(--d)", marginBottom: 18,
+          }}>
+            Who you're really talking to
+          </h2>
+          {strategy.icp.map((p, i) => (
+            <div key={i} style={{ marginBottom: 14 }}>
+              <div className="fh" style={{
+                fontSize: 15, fontWeight: 800, color: "var(--d)", marginBottom: 4,
+              }}>{p.name}</div>
+              <p className="fb" style={{
+                fontSize: 14, color: "var(--d-soft)",
+                lineHeight: 1.55, margin: 0,
+              }}>{p.description}</p>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* 90-DAY PRIORITIES */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.55, duration: 0.5 }}
+          style={{ marginTop: 36, paddingTop: 28, borderTop: "1px dashed var(--line)" }}
+        >
+          <h2 className="fh" style={{
+            fontSize: 22, fontWeight: 900, letterSpacing: "-0.03em",
+            color: "var(--d)", marginBottom: 18,
+          }}>
+            The next 90 days
+          </h2>
+          {strategy.ninetyDayPriorities.map((priority, i) => (
+            <div key={i} style={{
+              display: "flex", gap: 18, marginBottom: 12, alignItems: "baseline",
+            }}>
+              <span className="fh" style={{
+                fontSize: 11, fontWeight: 700, color: "var(--o)",
+                letterSpacing: "0.08em", minWidth: 60,
+              }}>
+                MONTH {priority.month}
+              </span>
+              <p className="fb" style={{
+                fontSize: 14.5, color: "var(--d)",
+                lineHeight: 1.55, margin: 0,
+              }}>{priority.focus}</p>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* QUICK WINS */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.7, duration: 0.6 }}
           style={{
-            marginTop: 28, padding: "24px 26px",
+            marginTop: 36, padding: "24px 26px",
             background: "var(--cream)", borderRadius: 18,
             border: "1px solid rgba(255,107,53,0.18)",
           }}
@@ -1231,10 +1881,11 @@ function StrategyPortal({ strategy, location, onContinue }) {
           </ul>
         </motion.div>
 
+        {/* CTA */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.8, duration: 0.6 }}
+          transition={{ delay: 2.0, duration: 0.6 }}
           style={{
             marginTop: 56, paddingTop: 32,
             borderTop: "1px dashed var(--line)",
@@ -1243,7 +1894,7 @@ function StrategyPortal({ strategy, location, onContinue }) {
           }}
         >
           <span className="fb" style={{ fontSize: 14, color: "var(--d-soft)", fontStyle: "italic" }}>
-            And here's how it lives day to day →
+            See your strategy in action →
           </span>
           <button onClick={onContinue} className="primary-btn">
             Open your dashboard
@@ -1256,12 +1907,13 @@ function StrategyPortal({ strategy, location, onContinue }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   DASHBOARD PORTAL
+   DASHBOARD PORTAL — rebuilt to consume strategy + dashData props
    ───────────────────────────────────────────────────────────────────────── */
 
-function DashboardPortal({ industry, location, answers }) {
+function DashboardPortal({ strategy, dashData }) {
   const [section, setSection] = useState("home");
-  const place = location || "your area";
+  const industry = strategy.business.industry;
+  const place = strategy.business.where || "your area";
 
   return (
     <motion.div
@@ -1329,12 +1981,12 @@ function DashboardPortal({ industry, location, answers }) {
           </header>
 
           <div className="app-content">
-            {section === "home" && <DashHome industry={industry} place={place} setSection={setSection} />}
-            {section === "calendar" && <DashCalendar industry={industry} place={place} />}
+            {section === "home" && <DashHome strategy={strategy} dashData={dashData} place={place} setSection={setSection} />}
+            {section === "calendar" && <DashCalendar strategy={strategy} dashData={dashData} />}
             {section === "drafts" && <DashDrafts industry={industry} place={place} />}
             {section === "tasks" && <DashTasks industry={industry} />}
-            {section === "analytics" && <DashAnalytics />}
-            {section === "settings" && <DashSettings />}
+            {section === "analytics" && <DashAnalytics dashData={dashData} />}
+            {section === "settings" && <DashSettings strategy={strategy} />}
           </div>
         </div>
       </div>
@@ -1343,7 +1995,7 @@ function DashboardPortal({ industry, location, answers }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   ACCOUNT MANAGER PILL — fixed z-index for dropdown
+   ACCOUNT MANAGER PILL — unchanged
    ───────────────────────────────────────────────────────────────────────── */
 
 function AccountManagerPill() {
@@ -1422,12 +2074,13 @@ function AccountManagerPill() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   DASHBOARD SECTIONS (unchanged from v2)
+   DASH HOME — uses dashData.headline for seeded numbers
    ───────────────────────────────────────────────────────────────────────── */
 
-function DashHome({ industry, place, setSection }) {
-  const drafts = DRAFTS_BY_INDUSTRY[industry] || DRAFTS_BY_INDUSTRY.service;
-  const tasks = TASKS_BY_INDUSTRY[industry] || TASKS_BY_INDUSTRY.service;
+function DashHome({ strategy, dashData, place, setSection }) {
+  const drafts = DRAFTS_BY_INDUSTRY[strategy.business.industry] || DRAFTS_BY_INDUSTRY.service;
+  const tasks = TASKS_BY_INDUSTRY[strategy.business.industry] || TASKS_BY_INDUSTRY.service;
+  const h = dashData.headline;
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
@@ -1441,7 +2094,7 @@ function DashHome({ industry, place, setSection }) {
             color: "var(--d)", marginBottom: 6,
           }}>Morning. Here's where things stand.</h1>
           <p className="fb" style={{ fontSize: 14, color: "var(--d-soft)" }}>
-            Week 3 of your strategy · 8 posts published · trending up
+            Week 3 of your strategy · {Object.keys(dashData.calendar).length} pieces this month · trending up
           </p>
         </div>
         <button className="primary-btn-sm" onClick={() => setSection("drafts")}>
@@ -1450,16 +2103,16 @@ function DashHome({ industry, place, setSection }) {
       </div>
 
       <div className="stat-grid">
-        <StatCard label="Reach" value="2,847" delta="+18%" deltaPositive
+        <StatCard label="Reach" value={h.reach.value} delta={h.reach.delta.value} deltaPositive={h.reach.delta.positive}
           tooltip="People who saw your content this week, across all channels."
           why="Reach tells you how many actual humans saw your stuff. Good first signal that your content is landing." />
-        <StatCard label="Profile views" value="143" delta="+24%" deltaPositive
+        <StatCard label="Profile views" value={h.profileViews.value} delta={h.profileViews.delta.value} deltaPositive={h.profileViews.delta.positive}
           tooltip="People who clicked through to your business profile."
           why="Profile views are warm leads — someone interested enough to check you out properly." />
-        <StatCard label="Enquiries" value="12" delta="+5" deltaPositive
+        <StatCard label="Enquiries" value={h.enquiries.value} delta={h.enquiries.delta.value} deltaPositive={h.enquiries.delta.positive}
           tooltip="Direct messages, booking requests, or contact form submissions."
           why="The number that actually pays the bills. Everything else is upstream of this." />
-        <StatCard label="Reviews" value="4.9" delta="2 new" deltaPositive
+        <StatCard label="Reviews" value={h.reviews.value} delta={`${h.reviews.newCount} new`} deltaPositive
           tooltip="Average Google review rating, all-time."
           why="Reviews are the strongest local-search signal. New ones every month keep you visible." />
       </div>
@@ -1502,22 +2155,17 @@ function DashHome({ industry, place, setSection }) {
   );
 }
 
-function DashCalendar({ industry, place }) {
+/* ─────────────────────────────────────────────────────────────────────────
+   DASH CALENDAR — uses dashData.calendar (strategy-driven)
+   ───────────────────────────────────────────────────────────────────────── */
+
+function DashCalendar({ strategy, dashData }) {
   const today = new Date();
   const month = today.getMonth();
   const year = today.getFullYear();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDay = new Date(year, month, 1).getDay();
-  const contentDays = {
-    3: { type: "post", channel: "Instagram", title: "Behind-the-scenes" },
-    7: { type: "reel", channel: "Instagram", title: "Transformation" },
-    10: { type: "gbp", channel: "Google", title: "Weekly update" },
-    14: { type: "post", channel: "Facebook", title: "Customer story" },
-    17: { type: "reel", channel: "Instagram", title: "Process video" },
-    21: { type: "email", channel: "Email", title: "Monthly newsletter" },
-    24: { type: "gbp", channel: "Google", title: "Photos" },
-    28: { type: "post", channel: "Instagram", title: "Authority post" },
-  };
+  const contentDays = dashData.calendar;
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
@@ -1526,7 +2174,7 @@ function DashCalendar({ industry, place }) {
           fontSize: 32, fontWeight: 900, letterSpacing: "-0.04em", color: "var(--d)", marginBottom: 6,
         }}>Content calendar</h1>
         <p className="fb" style={{ fontSize: 14, color: "var(--d-soft)" }}>
-          {today.toLocaleString("default", { month: "long", year: "numeric" })} · 8 pieces planned · 3 ready to ship
+          {today.toLocaleString("default", { month: "long", year: "numeric" })} · {Object.keys(contentDays).length} pieces planned · 3 ready to ship
         </p>
       </div>
 
@@ -1561,6 +2209,10 @@ function DashCalendar({ industry, place }) {
     </motion.div>
   );
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   DASH DRAFTS — unchanged, uses curated DRAFTS_BY_INDUSTRY
+   ───────────────────────────────────────────────────────────────────────── */
 
 function DashDrafts({ industry, place }) {
   const drafts = DRAFTS_BY_INDUSTRY[industry] || DRAFTS_BY_INDUSTRY.service;
@@ -1597,6 +2249,10 @@ function DashDrafts({ industry, place }) {
   );
 }
 
+/* ─────────────────────────────────────────────────────────────────────────
+   DASH TASKS — unchanged
+   ───────────────────────────────────────────────────────────────────────── */
+
 function DashTasks({ industry }) {
   const tasks = TASKS_BY_INDUSTRY[industry] || TASKS_BY_INDUSTRY.service;
   return (
@@ -1625,7 +2281,11 @@ function DashTasks({ industry }) {
   );
 }
 
-function DashAnalytics() {
+/* ─────────────────────────────────────────────────────────────────────────
+   DASH ANALYTICS — KPIs, channel breakdown, funnel all from dashData
+   ───────────────────────────────────────────────────────────────────────── */
+
+function DashAnalytics({ dashData }) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
       <div style={{ marginBottom: 28 }}>
@@ -1642,33 +2302,98 @@ function DashAnalytics() {
         </p>
       </div>
 
+      {/* KPI grid — strategy-driven */}
       <div className="stat-grid">
-        <StatCard label="Impressions" value="14,230" delta="+12%" deltaPositive
-          tooltip="Times your content was shown to someone, anywhere."
-          why="A volume number — useful as a baseline. On its own it doesn't pay your bills, but if it's not growing, nothing else will." />
-        <StatCard label="Reach" value="9,840" delta="+18%" deltaPositive
-          tooltip="Unique people who saw your content (de-duplicated)."
-          why="Reach tells you how many real humans saw your stuff. Better signal than impressions." />
-        <StatCard label="Engagement rate" value="6.2%" delta="+1.8pp" deltaPositive
-          tooltip="Likes, comments, shares, and saves as a percentage of reach."
-          why="Industry average is ~2%. Above 5% means content is genuinely landing — keep doing more of what's working." />
-        <StatCard label="Profile visits" value="487" delta="+24%" deltaPositive
-          tooltip="People who clicked through to view your full business profile."
-          why="The first warm signal of intent. Someone interested enough to look you up properly." />
-        <StatCard label="Enquiries" value="38" delta="+11" deltaPositive
-          tooltip="Direct messages, booking requests, and contact form submissions."
-          why="The number that pays your bills. Everything else is upstream of this." />
-        <StatCard label="Conversion rate" value="7.8%" delta="+2.1pp" deltaPositive
-          tooltip="Enquiries divided by profile visits."
-          why="Tells you how compelling your profile is at turning interest into action. Above 5% is healthy for most service businesses." />
+        {dashData.kpiCards.map((k, i) => (
+          <StatCard key={i}
+            label={k.label}
+            value={k.value}
+            delta={k.delta}
+            deltaPositive={k.deltaPositive}
+            tooltip={k.tooltip}
+            why={k.why}
+          />
+        ))}
       </div>
 
+      {/* Trend */}
       <div className="app-card" style={{ marginTop: 20 }}>
         <div className="app-card-head">
           <h3>Trend · last 12 weeks</h3>
           <span style={{ fontSize: 12, color: "var(--d-soft)", fontStyle: "italic" }}>Reach, weekly</span>
         </div>
-        <Sparkline />
+        <Sparkline data={dashData.trend} />
+      </div>
+
+      {/* Channel breakdown */}
+      <div className="app-card" style={{ marginTop: 20 }}>
+        <div className="app-card-head">
+          <h3>By channel</h3>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {dashData.channelBreakdown.map((c, i) => (
+            <div key={i} style={{
+              display: "grid",
+              gridTemplateColumns: "1.6fr 1fr 1fr 1fr",
+              padding: "14px 0",
+              borderBottom: i < dashData.channelBreakdown.length - 1 ? "1px dashed var(--line)" : "none",
+              alignItems: "center", gap: 12,
+            }}>
+              <div>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: "var(--d)" }}>{c.name}</div>
+                <div style={{
+                  fontSize: 10, color: c.role === "primary" ? "var(--o)" : "var(--d-soft)",
+                  textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 700, marginTop: 2,
+                }}>{c.role}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: "var(--d-soft)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Reach</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "var(--d)", marginTop: 2 }}>{c.reach}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: "var(--d-soft)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Posts</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "var(--d)", marginTop: 2 }}>{c.posts}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: "var(--d-soft)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Engagement</div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "var(--d)", marginTop: 2 }}>{c.engagement}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Funnel */}
+      <div className="app-card" style={{ marginTop: 20 }}>
+        <div className="app-card-head">
+          <h3>Funnel · last 30 days</h3>
+        </div>
+        {dashData.funnel.map((f, i) => {
+          // Compute width as proportion of impressions (first stage)
+          const firstValue = parseInt(dashData.funnel[0].value.replace(/,/g, ""), 10);
+          const thisValue = parseInt(f.value.replace(/,/g, ""), 10);
+          const width = firstValue > 0 ? Math.max((thisValue / firstValue) * 100, 6) : 100;
+          return (
+            <div key={i} style={{ padding: "10px 0" }}>
+              <div style={{
+                display: "flex", justifyContent: "space-between",
+                fontSize: 13, marginBottom: 6,
+              }}>
+                <span style={{ color: "var(--d)" }}>{f.stage}</span>
+                <span style={{ color: "var(--d)", fontWeight: 700 }}>{f.value}</span>
+              </div>
+              <div style={{
+                height: 6, background: "var(--bg-warm)", borderRadius: 3, overflow: "hidden",
+              }}>
+                <div style={{
+                  width: `${width}%`, height: "100%",
+                  background: "var(--o)", borderRadius: 3,
+                  transition: "width 0.6s ease",
+                }} />
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="dash-2col" style={{ marginTop: 20 }}>
@@ -1693,7 +2418,14 @@ function DashAnalytics() {
   );
 }
 
-function DashSettings() {
+/* ─────────────────────────────────────────────────────────────────────────
+   DASH SETTINGS — connected channels now reflect strategy.channels
+   ───────────────────────────────────────────────────────────────────────── */
+
+function DashSettings({ strategy }) {
+  const ALL_CHANNELS = ["Instagram", "Facebook", "Google Business Profile", "TikTok", "LinkedIn", "Email"];
+  const recommended = new Set(strategy.channels.map((c) => c.name));
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
       <div style={{ marginBottom: 28 }}>
@@ -1712,22 +2444,18 @@ function DashSettings() {
         </div>
         <div className="app-card">
           <h3 className="app-card-h">Connected channels</h3>
-          {[
-            { name: "Instagram", status: "Connected", color: true },
-            { name: "Facebook", status: "Connected", color: true },
-            { name: "Google Business Profile", status: "Connected", color: true },
-            { name: "TikTok", status: "Not connected", color: false },
-            { name: "LinkedIn", status: "Not connected", color: false },
-            { name: "Email (Mailchimp)", status: "Connected", color: true },
-          ].map((c) => (
-            <div key={c.name} className="settings-row">
-              <span className="settings-label">{c.name}</span>
-              <span className="settings-value" style={{
-                color: c.color ? "var(--o)" : "var(--d-soft)",
-                fontStyle: c.color ? "normal" : "italic",
-              }}>{c.status}</span>
-            </div>
-          ))}
+          {ALL_CHANNELS.map((name) => {
+            const isOn = recommended.has(name);
+            return (
+              <div key={name} className="settings-row">
+                <span className="settings-label">{name}</span>
+                <span className="settings-value" style={{
+                  color: isOn ? "var(--o)" : "var(--d-soft)",
+                  fontStyle: isOn ? "normal" : "italic",
+                }}>{isOn ? "Connected" : "Not connected"}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </motion.div>
@@ -1735,7 +2463,7 @@ function DashSettings() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   StatCard — tooltip layered above sibling cards (z-index fix)
+   StatCard — unchanged (tooltip layered above sibling cards)
    ───────────────────────────────────────────────────────────────────────── */
 
 function StatCard({ label, value, delta, deltaPositive, tooltip, why }) {
@@ -1787,13 +2515,15 @@ function StatCard({ label, value, delta, deltaPositive, tooltip, why }) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   Sparkline
+   Sparkline — now accepts data prop; falls back to default if none
    ───────────────────────────────────────────────────────────────────────── */
 
-function Sparkline() {
-  const data = [120, 180, 220, 240, 280, 320, 380, 420, 510, 580, 670, 740];
-  const max = Math.max(...data);
-  const min = Math.min(...data);
+function Sparkline({ data }) {
+  const series = data && data.length > 0
+    ? data
+    : [120, 180, 220, 240, 280, 320, 380, 420, 510, 580, 670, 740];
+  const max = Math.max(...series);
+  const min = Math.min(...series);
   const range = max - min || 1;
   const width = 700;
   const height = 140;
@@ -1801,8 +2531,8 @@ function Sparkline() {
   const innerW = width - padding * 2;
   const innerH = height - padding * 2;
 
-  const points = data.map((v, i) => {
-    const x = padding + (i / (data.length - 1)) * innerW;
+  const points = series.map((v, i) => {
+    const x = padding + (i / (series.length - 1)) * innerW;
     const y = padding + (1 - (v - min) / range) * innerH;
     return [x, y];
   });
@@ -1828,7 +2558,7 @@ function Sparkline() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   Presenter panel
+   Presenter panel — unchanged
    ───────────────────────────────────────────────────────────────────────── */
 
 function PresenterPanel({ open, portal, onClose, onJumpTo, onSkip }) {
@@ -1882,8 +2612,9 @@ function PresenterPanel({ open, portal, onClose, onJumpTo, onSkip }) {
   );
 }
 
+
 /* ─────────────────────────────────────────────────────────────────────────
-   DRAFTS by industry — expanded
+   DRAFTS by industry — unchanged from v2
    ───────────────────────────────────────────────────────────────────────── */
 
 const DRAFTS_BY_INDUSTRY = {
@@ -1958,6 +2689,10 @@ const DRAFTS_BY_INDUSTRY = {
     { channel: "Email", text: "Hi {first_name},\n\nMonthly check-in. Three things — we've got a few new slots opening up next month, here's a quick tip we've been sharing with clients, and as ever, hit reply if you've got anything you'd like a hand with.", scheduledFor: "Unscheduled" },
   ],
 };
+
+/* ─────────────────────────────────────────────────────────────────────────
+   TASKS by industry — unchanged from v2
+   ───────────────────────────────────────────────────────────────────────── */
 
 const TASKS_BY_INDUSTRY = {
   trade: [
@@ -2061,7 +2796,7 @@ const TASKS_BY_INDUSTRY = {
 };
 
 /* ─────────────────────────────────────────────────────────────────────────
-   GLOBAL STYLES
+   GLOBAL STYLES — unchanged from v2
    ───────────────────────────────────────────────────────────────────────── */
 
 function GlobalStyles() {
