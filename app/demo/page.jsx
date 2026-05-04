@@ -20,7 +20,7 @@ const ACCOUNT_MANAGER = {
   role: "Founder | Your Account Mate",
   email: "george@getmarketmate.co.uk",
   initials: "GH",
-  photo:"/george.jpg",
+  photo: null, // set to "/george.jpg" once hosted
 };
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -624,13 +624,12 @@ export default function DemoPage() {
             key="loading-strategy"
             title="Building your strategy"
             steps={[
-              "Reading your answers",
-              "Analysing your industry",
-              "Pulling local search data",
-              "Identifying quick wins",
-              "Drafting recommendations",
+              { label: "Reading your answers", duration: 500 },
+              { label: "Analysing your industry", duration: 1100 },
+              { label: "Pulling local search data", duration: 1400 },
+              { label: "Identifying quick wins", duration: 800 },
+              { label: "Drafting recommendations", duration: 1000 },
             ]}
-            duration={3200}
             onDone={() => setPortal("strategy")}
           />
         )}
@@ -649,13 +648,12 @@ export default function DemoPage() {
             key="loading-dashboard"
             title="Setting up your dashboard"
             steps={[
-              "Provisioning your workspace",
-              "Building your content calendar",
-              "Drafting your first content",
-              "Loading your analytics",
-              "Connecting your channels",
+              { label: "Provisioning your workspace", duration: 600 },
+              { label: "Building your content calendar", duration: 1200 },
+              { label: "Drafting your first content", duration: 1600 },
+              { label: "Loading your analytics", duration: 700 },
+              { label: "Connecting your channels", duration: 900 },
             ]}
-            duration={3000}
             onDone={() => setPortal("dashboard")}
           />
         )}
@@ -822,29 +820,40 @@ function PasswordGate({ onUnlock }) {
    then onDone fires.
    ───────────────────────────────────────────────────────────────────────── */
 
-function LoadingScreen({ title, steps, duration = 3000, onDone }) {
+function LoadingScreen({ title, steps, onDone }) {
+  // Normalise steps: each becomes { label, duration }.
+  // Strings get a default duration; objects pass through.
+  const normalisedSteps = steps.map((s) =>
+    typeof s === "string" ? { label: s, duration: 600 } : s
+  );
+
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState([]);
 
   useEffect(() => {
-    const stepDuration = duration / steps.length;
     const timers = [];
+    let elapsed = 0;
 
-    steps.forEach((_, i) => {
+    normalisedSteps.forEach((step, i) => {
+      // Mark this step as active when the previous step's duration has passed
       timers.push(setTimeout(() => {
         if (i > 0) setCompleted((c) => [...c, i - 1]);
         setActiveStep(i);
-      }, i * stepDuration));
+      }, elapsed));
+      elapsed += step.duration;
     });
 
+    // Mark final step complete just before finishing
     timers.push(setTimeout(() => {
-      setCompleted(steps.map((_, i) => i));
-    }, (steps.length - 0.3) * stepDuration));
+      setCompleted(normalisedSteps.map((_, i) => i));
+    }, elapsed - 250));
 
-    timers.push(setTimeout(onDone, duration));
+    // Total duration finishes
+    timers.push(setTimeout(onDone, elapsed));
 
     return () => timers.forEach(clearTimeout);
-  }, [duration, steps.length, onDone]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <motion.div
@@ -889,7 +898,7 @@ function LoadingScreen({ title, steps, duration = 3000, onDone }) {
         minWidth: 280,
         maxWidth: 360,
       }}>
-        {steps.map((step, i) => {
+        {normalisedSteps.map((step, i) => {
           const isDone = completed.includes(i);
           const isActive = activeStep === i && !isDone;
           const isPending = i > activeStep;
@@ -950,7 +959,7 @@ function LoadingScreen({ title, steps, duration = 3000, onDone }) {
                   }} />
                 )}
               </div>
-              <span>{step}</span>
+              <span>{step.label}</span>
             </motion.div>
           );
         })}
