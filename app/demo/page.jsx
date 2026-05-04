@@ -736,59 +736,50 @@ function PasswordGate({ onUnlock }) {
 
       <motion.form
         onSubmit={submit}
-        animate={shaking ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : {}}
+        animate={shaking ? { x: [0, -8, 8, -6, 6, -3, 3, 0] } : { x: 0 }}
         transition={{ duration: 0.5 }}
-        initial={{ opacity: 0, y: 14 }}
         style={{
-          opacity: 1,
           display: "flex", flexDirection: "column", gap: 12,
           width: "100%", maxWidth: 320,
         }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, duration: 0.6 }}
-          style={{ display: "flex", flexDirection: "column", gap: 12 }}
+        <input
+          type="password"
+          placeholder="Demo key"
+          value={val}
+          onChange={(e) => setVal(e.target.value)}
+          autoFocus
+          style={{
+            width: "100%",
+            padding: "14px 18px",
+            borderRadius: 12,
+            border: `1.5px solid ${error ? "#c0392b" : "var(--line)"}`,
+            background: "white",
+            fontSize: 15,
+            color: "var(--d)",
+            textAlign: "center",
+            letterSpacing: "0.04em",
+            transition: "border-color 0.18s, box-shadow 0.18s",
+            boxShadow: error ? "0 0 0 4px rgba(192,57,43,0.1)" : "none",
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            padding: "14px 20px",
+            background: "var(--d)",
+            color: "white",
+            border: "none",
+            borderRadius: 12,
+            fontSize: 13,
+            fontWeight: 700,
+            letterSpacing: "0.04em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+          }}
         >
-          <input
-            type="password"
-            placeholder="Demo key"
-            value={val}
-            onChange={(e) => setVal(e.target.value)}
-            autoFocus
-            style={{
-              width: "100%",
-              padding: "14px 18px",
-              borderRadius: 12,
-              border: `1.5px solid ${error ? "#c0392b" : "var(--line)"}`,
-              background: "white",
-              fontSize: 15,
-              color: "var(--d)",
-              textAlign: "center",
-              letterSpacing: "0.04em",
-              transition: "border-color 0.18s, box-shadow 0.18s",
-              boxShadow: error ? "0 0 0 4px rgba(192,57,43,0.1)" : "none",
-            }}
-          />
-          <button
-            type="submit"
-            style={{
-              padding: "14px 20px",
-              background: "var(--d)",
-              color: "white",
-              border: "none",
-              borderRadius: 12,
-              fontSize: 13,
-              fontWeight: 700,
-              letterSpacing: "0.04em",
-              textTransform: "uppercase",
-              cursor: "pointer",
-            }}
-          >
-            Unlock
-          </button>
-        </motion.div>
+          Unlock
+        </button>
       </motion.form>
 
       <AnimatePresence>
