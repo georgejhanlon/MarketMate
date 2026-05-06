@@ -1275,15 +1275,15 @@ function PasswordGate({ onUnlock }) {
         transition={{ delay: 0.1, duration: 0.5 }}
         className="fh"
         style={{
-          fontSize: "clamp(36px, 6vw, 72px)",
-          fontWeight: 900, letterSpacing: "-0.07em",
-          color: "var(--o)", textTransform: "uppercase",
-          lineHeight: 0.88, marginBottom: 28,
-          textAlign: "left",
+          fontSize: "clamp(40px, 7vw, 84px)",
+          fontWeight: 700, letterSpacing: "-0.04em",
+          color: "var(--o)",
+          lineHeight: 1, marginBottom: 28,
+          textAlign: "center",
           display: "inline-block",
         }}
       >
-        MARK<span style={{ letterSpacing: "-0.16em" }}>E</span>T<br/>MA<span style={{ letterSpacing: "-0.16em" }}>T</span>E
+        MarketMate.
       </motion.div>
 
       <motion.p
@@ -1332,7 +1332,7 @@ function PasswordGate({ onUnlock }) {
           type="submit"
           style={{
             padding: "14px 20px",
-            background: "var(--d)",
+            background: "var(--o)",
             color: "white",
             border: "none",
             borderRadius: 12,
@@ -1341,6 +1341,7 @@ function PasswordGate({ onUnlock }) {
             letterSpacing: "0.04em",
             textTransform: "uppercase",
             cursor: "pointer",
+            boxShadow: "0 4px 14px rgba(19,122,111,0.28)",
           }}
         >
           Unlock
@@ -1548,15 +1549,15 @@ function BootScreen({ onBegin }) {
         transition={{ delay: 0.3, duration: 0.7 }}
         className="fh"
         style={{
-          fontSize: "clamp(48px, 9vw, 112px)",
-          fontWeight: 900, letterSpacing: "-0.07em",
-          color: "var(--o)", textTransform: "uppercase",
-          lineHeight: 0.88, marginBottom: 36,
-          textAlign: "left",
+          fontSize: "clamp(56px, 10vw, 128px)",
+          fontWeight: 700, letterSpacing: "-0.04em",
+          color: "var(--o)",
+          lineHeight: 1, marginBottom: 36,
+          textAlign: "center",
           display: "inline-block",
         }}
       >
-        MARK<span style={{ letterSpacing: "-0.16em" }}>E</span>T<br/>MA<span style={{ letterSpacing: "-0.16em" }}>T</span>E
+        MarketMate.
       </motion.div>
 
       <motion.p
@@ -1587,7 +1588,7 @@ function BootScreen({ onBegin }) {
           fontSize: 15, fontWeight: 700,
           letterSpacing: "0.04em", textTransform: "uppercase",
           cursor: "pointer",
-          boxShadow: "0 12px 36px -12px rgba(42,39,37,0.4)",
+          boxShadow: "0 12px 36px -12px rgba(15,39,66,0.4)",
           display: "inline-flex", alignItems: "center", gap: 14,
         }}
       >
@@ -1861,7 +1862,7 @@ function StrategyPortal({ strategy, onContinue }) {
           style={{
             marginTop: 36, padding: "24px 26px",
             background: "var(--cream)", borderRadius: 18,
-            border: "1px solid rgba(255,107,53,0.18)",
+            border: "1px solid rgba(19,122,111,0.18)",
           }}
         >
           <div style={{ fontSize: 14, fontWeight: 700, color: "var(--d)", marginBottom: 10 }}>
@@ -1927,11 +1928,11 @@ function DashboardPortal({ strategy, dashData }) {
       <div className="app-frame">
         <aside className="app-sidebar">
           <div className="app-logo fh" style={{
-            fontSize: 16, fontWeight: 900, letterSpacing: "-0.07em",
-            color: "var(--o)", textTransform: "uppercase", lineHeight: 0.88,
+            fontSize: 20, fontWeight: 700, letterSpacing: "-0.03em",
+            color: "var(--cream)", lineHeight: 1,
             marginBottom: 28,
           }}>
-            MARK<span style={{ letterSpacing: "-0.16em" }}>E</span>T<br/>MA<span style={{ letterSpacing: "-0.16em" }}>T</span>E
+            MarketMate<span style={{ color: "var(--o)" }}>.</span>
           </div>
 
           <nav className="app-nav">
@@ -2544,14 +2545,14 @@ function Sparkline({ data }) {
     <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", height: "auto", display: "block" }}>
       <defs>
         <linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ff6b35" stopOpacity="0.18" />
-          <stop offset="100%" stopColor="#ff6b35" stopOpacity="0" />
+          <stop offset="0%" stopColor="#137A6F" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#137A6F" stopOpacity="0" />
         </linearGradient>
       </defs>
       <path d={pathArea} fill="url(#sparkfill)" />
-      <path d={pathLine} fill="none" stroke="#ff6b35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={pathLine} fill="none" stroke="#137A6F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       {points.map((p, i) => (
-        <circle key={i} cx={p[0]} cy={p[1]} r={i === points.length - 1 ? 4 : 2.5} fill="#ff6b35" />
+        <circle key={i} cx={p[0]} cy={p[1]} r={i === points.length - 1 ? 4 : 2.5} fill="#137A6F" />
       ))}
     </svg>
   );
@@ -2802,34 +2803,21 @@ const TASKS_BY_INDUSTRY = {
 function GlobalStyles() {
   return (
     <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap');
-
-      @font-face {
-        font-family: 'Aileron';
-        font-weight: 900;
-        font-display: swap;
-        src: url('https://cdn.jsdelivr.net/gh/suitcase/Aileron@master/Aileron-Black.otf') format('opentype');
-      }
-      @font-face {
-        font-family: 'Aileron';
-        font-weight: 700;
-        font-display: swap;
-        src: url('https://cdn.jsdelivr.net/gh/suitcase/Aileron@master/Aileron-Bold.otf') format('opentype');
-      }
+      @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&family=Familjen+Grotesk:wght@400;500;600;700&display=swap');
 
       :root {
-        --o:  #ff6b35;
-        --o-soft: #ffe9dd;
-        --d:  #2a2725;
-        --d-soft: #6b6560;
-        --bg: #faf6ef;
-        --bg-warm: #f4ede1;
-        --cream: #fff8ee;
-        --line: rgba(42,39,37,0.08);
-        --app-bg: #f4ede1;
+        --o:  #137A6F;
+        --o-soft: #D8E8E5;
+        --d:  #0F2742;
+        --d-soft: #5C6470;
+        --bg: #F2EDE2;
+        --bg-warm: #EBE5D8;
+        --cream: #FAF7F2;
+        --line: rgba(15,39,66,0.08);
+        --app-bg: #EBE5D8;
         --app-surface: #ffffff;
-        --app-sidebar: #2a2725;
-        --fh: 'Aileron', 'Helvetica Neue', Arial, sans-serif;
+        --app-sidebar: #0F2742;
+        --fh: 'Familjen Grotesk', 'Helvetica Neue', Arial, sans-serif;
         --fb: 'Raleway', sans-serif;
       }
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -2871,7 +2859,7 @@ function GlobalStyles() {
         position: fixed; top: 20px; right: 20px;
         width: 56px; height: 22px;
         border-radius: 999px;
-        background: rgba(42,39,37,0.12);
+        background: rgba(15,39,66,0.12);
         border: none;
         cursor: pointer;
         z-index: 200;
@@ -2879,7 +2867,7 @@ function GlobalStyles() {
         padding: 0;
       }
       .presenter-btn:hover {
-        background: rgba(42,39,37,0.22);
+        background: rgba(15,39,66,0.22);
         transform: scale(1.04);
       }
       .presenter-btn:active { transform: scale(0.96); }
@@ -2895,8 +2883,8 @@ function GlobalStyles() {
         border-radius: 50%;
         background: var(--o);
         transform: translate(-50%, -50%);
-        box-shadow: 0 0 0 6px rgba(255,107,53,0.16),
-                    0 0 24px rgba(255,107,53,0.4);
+        box-shadow: 0 0 0 6px rgba(19,122,111,0.16),
+                    0 0 24px rgba(19,122,111,0.4);
         animation: orbit-pulse 1.4s ease-in-out infinite;
       }
       @keyframes orbit-pulse {
@@ -2947,7 +2935,7 @@ function GlobalStyles() {
         background: white; color: var(--d);
         border: 1px solid var(--line);
         border-top-left-radius: 6px;
-        box-shadow: 0 2px 8px -4px rgba(42,39,37,0.06);
+        box-shadow: 0 2px 8px -4px rgba(15,39,66,0.06);
       }
       .msg-bubble-user {
         background: var(--o); color: white;
@@ -2998,19 +2986,19 @@ function GlobalStyles() {
         border-radius: 18px;
         padding: 6px 6px 6px 18px;
         display: flex; align-items: center; gap: 8px;
-        box-shadow: 0 6px 24px -10px rgba(42,39,37,0.16);
+        box-shadow: 0 6px 24px -10px rgba(15,39,66,0.16);
         pointer-events: auto;
         transition: border-color 0.2s, box-shadow 0.2s;
       }
       .input-bar:focus-within {
         border-color: var(--o);
-        box-shadow: 0 0 0 4px rgba(255,107,53,0.12), 0 6px 24px -10px rgba(42,39,37,0.16);
+        box-shadow: 0 0 0 4px rgba(19,122,111,0.12), 0 6px 24px -10px rgba(15,39,66,0.16);
       }
       .input-bar input {
         flex: 1; border: none; padding: 12px 0;
         font-size: 16px; background: transparent; color: var(--d);
       }
-      .input-bar input::placeholder { color: rgba(42,39,37,0.4); }
+      .input-bar input::placeholder { color: rgba(15,39,66,0.4); }
       .input-bar input:disabled { color: var(--d-soft); cursor: not-allowed; }
 
       .send-btn {
@@ -3045,7 +3033,7 @@ function GlobalStyles() {
         letter-spacing: 0.02em; cursor: pointer;
         transition: background 0.18s, transform 0.15s;
       }
-      .primary-btn:hover { background: #15110f; transform: translateY(-1px); }
+      .primary-btn:hover { background: #0A1A2E; transform: translateY(-1px); }
 
       .primary-btn-sm {
         padding: 9px 16px;
@@ -3054,7 +3042,7 @@ function GlobalStyles() {
         font-size: 12.5px; font-weight: 700;
         cursor: pointer; transition: background 0.18s;
       }
-      .primary-btn-sm:hover { background: #e85e28; }
+      .primary-btn-sm:hover { background: #0F6259; }
 
       .ghost-btn-sm {
         padding: 9px 14px;
@@ -3108,7 +3096,7 @@ function GlobalStyles() {
         display: flex; justify-content: space-between; align-items: center;
       }
       .panel-jump-btn:hover { background: rgba(255,255,255,0.12); }
-      .panel-jump-btn.current { background: rgba(255,107,53,0.22); }
+      .panel-jump-btn.current { background: rgba(19,122,111,0.22); }
 
       .panel-btn {
         width: 100%; padding: 9px 12px;
@@ -3120,7 +3108,7 @@ function GlobalStyles() {
       }
       .panel-btn:hover { background: rgba(255,255,255,0.14); }
       .panel-btn.primary { background: var(--o); }
-      .panel-btn.primary:hover { background: #e85e28; }
+      .panel-btn.primary:hover { background: #0F6259; }
 
       /* Dashboard */
       .app-frame {
@@ -3151,8 +3139,8 @@ function GlobalStyles() {
       }
       .app-nav-item:hover { background: rgba(255,255,255,0.06); color: white; }
       .app-nav-item.active {
-        background: rgba(255,107,53,0.22);
-        color: #ffb89a;
+        background: rgba(19,122,111,0.22);
+        color: #7DB8B0;
       }
       .app-nav-item.locked {
         cursor: not-allowed;
@@ -3213,7 +3201,7 @@ function GlobalStyles() {
         flex: 1; border: none; background: transparent;
         font-size: 13px; color: var(--d);
       }
-      .app-search input::placeholder { color: rgba(42,39,37,0.4); }
+      .app-search input::placeholder { color: rgba(15,39,66,0.4); }
 
       .app-icon-btn {
         position: relative;
@@ -3225,7 +3213,7 @@ function GlobalStyles() {
         color: var(--d-soft);
         transition: background 0.18s;
       }
-      .app-icon-btn:hover { background: rgba(255,107,53,0.1); color: var(--o); }
+      .app-icon-btn:hover { background: rgba(19,122,111,0.1); color: var(--o); }
       .app-notif-dot {
         position: absolute; top: 8px; right: 9px;
         width: 7px; height: 7px;
@@ -3244,13 +3232,13 @@ function GlobalStyles() {
         transition: border-color 0.18s, box-shadow 0.18s;
       }
       .account-pill:hover {
-        border-color: rgba(255,107,53,0.35);
-        box-shadow: 0 2px 12px -4px rgba(255,107,53,0.18);
+        border-color: rgba(19,122,111,0.35);
+        box-shadow: 0 2px 12px -4px rgba(19,122,111,0.18);
       }
       .account-avatar {
         width: 30px; height: 30px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--o), #e04a14);
+        background: linear-gradient(135deg, var(--o), #0B4F47);
         color: white;
         display: flex; align-items: center; justify-content: center;
         font-size: 11px; font-weight: 800;
@@ -3275,7 +3263,7 @@ function GlobalStyles() {
         border: 1px solid var(--line);
         border-radius: 14px;
         padding: 20px;
-        box-shadow: 0 20px 60px -20px rgba(42,39,37,0.28);
+        box-shadow: 0 20px 60px -20px rgba(15,39,66,0.28);
         z-index: 9999;
       }
       .account-card-btn {
@@ -3292,7 +3280,7 @@ function GlobalStyles() {
       }
       .account-card-btn:hover { background: var(--o-soft); color: var(--o); }
       .account-card-btn.primary { background: var(--o); color: white; }
-      .account-card-btn.primary:hover { background: #e85e28; color: white; }
+      .account-card-btn.primary:hover { background: #0F6259; color: white; }
       .account-card-btn.subtle { background: transparent; color: var(--d-soft); }
       .account-card-btn.subtle:hover { background: var(--bg-warm); }
 
@@ -3344,8 +3332,8 @@ function GlobalStyles() {
         transition: border-color 0.2s, box-shadow 0.2s;
       }
       .stat-card:hover {
-        border-color: rgba(255,107,53,0.25);
-        box-shadow: 0 8px 24px -16px rgba(255,107,53,0.2);
+        border-color: rgba(19,122,111,0.25);
+        box-shadow: 0 8px 24px -16px rgba(19,122,111,0.2);
       }
       .stat-label-row {
         display: flex; justify-content: space-between; align-items: center;
@@ -3485,7 +3473,7 @@ function GlobalStyles() {
         line-height: 1.6; white-space: pre-line;
       }
       .draft-card { transition: border-color 0.2s; }
-      .draft-card:hover { border-color: rgba(255,107,53,0.25); }
+      .draft-card:hover { border-color: rgba(19,122,111,0.25); }
 
       .cal-grid-large {
         display: grid; grid-template-columns: repeat(7, 1fr);
@@ -3511,11 +3499,11 @@ function GlobalStyles() {
       .cal-cell.empty { background: transparent; }
       .cal-cell.has {
         background: var(--cream);
-        border-color: rgba(255,107,53,0.2);
+        border-color: rgba(19,122,111,0.2);
         cursor: pointer;
       }
       .cal-cell.has:hover {
-        border-color: rgba(255,107,53,0.5);
+        border-color: rgba(19,122,111,0.5);
         transform: translateY(-1px);
       }
       .cal-cell.today {

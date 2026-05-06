@@ -55,10 +55,10 @@ export default function FounderPage() {
     return (
       <div style={{
         minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
-        background: "#faf6ef", fontFamily: "Raleway, sans-serif", color: "#2a2725",
+        background: "#F2EDE2", fontFamily: "Raleway, sans-serif", color: "#0F2742",
       }}>
         <div style={{ textAlign: "center" }}>
-          <p style={{ fontSize: 13, fontStyle: "italic", color: "#6b6560", opacity: 0.6 }}>
+          <p style={{ fontSize: 13, fontStyle: "italic", color: "#5C6470", opacity: 0.6 }}>
             Nothing here, sorry.
           </p>
         </div>
@@ -69,25 +69,18 @@ export default function FounderPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap');
-
-        @font-face {
-          font-family: 'Aileron';
-          font-weight: 900;
-          font-display: swap;
-          src: url('https://cdn.jsdelivr.net/gh/suitcase/Aileron@master/Aileron-Black.otf') format('opentype');
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&family=Familjen+Grotesk:wght@400;500;600;700&display=swap');
 
         :root {
-          --o:  #ff6b35;
-          --o-soft: #ffe9dd;
-          --d:  #2a2725;
-          --d-soft: #6b6560;
-          --bg: #faf6ef;
-          --bg-warm: #f4ede1;
-          --cream: #fff8ee;
-          --line: rgba(42,39,37,0.08);
-          --fh: 'Aileron', 'Helvetica Neue', Arial, sans-serif;
+          --o:  #137A6F;
+          --o-soft: #D8E8E5;
+          --d:  #0F2742;
+          --d-soft: #5C6470;
+          --bg: #F2EDE2;
+          --bg-warm: #EBE5D8;
+          --cream: #FAF7F2;
+          --line: rgba(15,39,66,0.08);
+          --fh: 'Familjen Grotesk', 'Helvetica Neue', Arial, sans-serif;
           --fb: 'Raleway', sans-serif;
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -112,8 +105,8 @@ export default function FounderPage() {
           outline: none;
           transition: border-color 0.18s, box-shadow 0.18s;
         }
-        .field:focus { border-color: var(--o); box-shadow: 0 0 0 4px rgba(255,107,53,0.12); }
-        .field::placeholder { color: rgba(42,39,37,0.4); }
+        .field:focus { border-color: var(--o); box-shadow: 0 0 0 4px rgba(19,122,111,0.12); }
+        .field::placeholder { color: rgba(15,39,66,0.4); }
         textarea.field { resize: vertical; min-height: 100px; line-height: 1.5; }
 
         .label {
@@ -206,7 +199,7 @@ export default function FounderPage() {
       <div style={{
         position: "fixed", top: -300, right: -200,
         width: 800, height: 800, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,107,53,0.07) 0%, transparent 62%)",
+        background: "radial-gradient(circle, rgba(19,122,111,0.07) 0%, transparent 62%)",
         pointerEvents: "none", zIndex: 0, filter: "blur(10px)",
       }} />
 
@@ -224,11 +217,11 @@ export default function FounderPage() {
           borderBottom: "1px solid var(--line)",
         }}>
           <a href="/" className="fh" style={{
-            fontSize: 16, fontWeight: 900, letterSpacing: "-0.07em",
-            color: "var(--o)", textTransform: "uppercase",
-            lineHeight: 0.88, textDecoration: "none",
+            fontSize: 22, fontWeight: 700, letterSpacing: "-0.03em",
+            color: "var(--o)",
+            lineHeight: 1, textDecoration: "none",
           }}>
-            MARK<span style={{ letterSpacing: "-0.16em" }}>E</span>T<br/>MA<span style={{ letterSpacing: "-0.16em" }}>T</span>E
+            MarketMate.
           </a>
           <span className="fb" style={{
             fontSize: 13, color: "var(--d-soft)",
@@ -283,7 +276,7 @@ export default function FounderPage() {
                   borderRadius: 20,
                   padding: "28px 28px 24px",
                   position: "relative",
-                  boxShadow: "0 8px 30px -16px rgba(42,39,37,0.1)",
+                  boxShadow: "0 8px 30px -16px rgba(15,39,66,0.1)",
                 }}>
                   <div style={{
                     display: "flex", justifyContent: "space-between",
@@ -365,7 +358,7 @@ export default function FounderPage() {
                 borderRadius: 22,
                 padding: "32px",
                 display: "flex", flexDirection: "column", gap: 18,
-                boxShadow: "0 8px 30px -16px rgba(42,39,37,0.1)",
+                boxShadow: "0 8px 30px -16px rgba(15,39,66,0.1)",
               }}>
                 <div style={{ marginBottom: 4 }}>
                   <h2 className="fh" style={{
@@ -445,7 +438,7 @@ export default function FounderPage() {
                   display: "flex", gap: 12, alignItems: "flex-start",
                   padding: "16px 18px",
                   background: "var(--cream)",
-                  border: "1.5px solid rgba(255,107,53,0.18)",
+                  border: "1.5px solid rgba(19,122,111,0.18)",
                   borderRadius: 14,
                   cursor: "pointer",
                   marginTop: 4,
@@ -477,14 +470,14 @@ export default function FounderPage() {
                     padding: "16px 24px",
                     borderRadius: 14,
                     border: "none",
-                    background: canSubmit ? "var(--o)" : "rgba(42,39,37,0.18)",
+                    background: canSubmit ? "var(--o)" : "rgba(15,39,66,0.18)",
                     color: "#fff",
                     fontSize: 15, fontWeight: 700,
                     fontFamily: "var(--fb)", letterSpacing: "0.01em",
                     cursor: canSubmit ? "pointer" : "not-allowed",
                     transition: "background 0.2s, opacity 0.2s",
                     display: "flex", justifyContent: "space-between", alignItems: "center",
-                    boxShadow: canSubmit ? "0 4px 18px rgba(255,107,53,0.28)" : "none",
+                    boxShadow: canSubmit ? "0 4px 18px rgba(19,122,111,0.28)" : "none",
                   }}
                 >
                   <span>{submitting ? "Sending…" : "Become a founder member"}</span>
@@ -540,7 +533,7 @@ export default function FounderPage() {
                 borderRadius: 18,
                 padding: "22px 24px",
                 marginBottom: 24,
-                boxShadow: "0 8px 30px -16px rgba(42,39,37,0.1)",
+                boxShadow: "0 8px 30px -16px rgba(15,39,66,0.1)",
               }}>
                 <p className="fb" style={{
                   fontSize: 14, fontWeight: 700, color: "var(--d)",
@@ -581,8 +574,8 @@ export default function FounderPage() {
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 12,
       }}>
-        <span className="fh" style={{ fontSize: 14, fontWeight: 900, letterSpacing: "-0.04em", color: "var(--d)" }}>
-          MarketMate
+        <span className="fh" style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.03em", color: "var(--o)" }}>
+          MarketMate.
         </span>
         <span className="fb" style={{ fontSize: 12, color: "var(--d-soft)", opacity: 0.7, fontStyle: "italic" }}>
           a private page — please don't share

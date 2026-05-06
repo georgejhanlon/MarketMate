@@ -139,31 +139,18 @@ export default function MarketMatePage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&display=swap');
-
-        @font-face {
-          font-family: 'Aileron';
-          font-weight: 900;
-          font-display: swap;
-          src: url('https://cdn.jsdelivr.net/gh/suitcase/Aileron@master/Aileron-Black.otf') format('opentype');
-        }
-        @font-face {
-          font-family: 'Aileron';
-          font-weight: 700;
-          font-display: swap;
-          src: url('https://cdn.jsdelivr.net/gh/suitcase/Aileron@master/Aileron-Bold.otf') format('opentype');
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&family=Familjen+Grotesk:wght@400;500;600;700&display=swap');
 
         :root {
-          --o:  #ff6b35;
-          --o-soft: #ffe9dd;
-          --d:  #2a2725;
-          --d-soft: #6b6560;
-          --bg: #faf6ef;
-          --bg-warm: #f4ede1;
-          --cream: #fff8ee;
-          --line: rgba(42,39,37,0.08);
-          --fh: 'Aileron', 'Helvetica Neue', Arial, sans-serif;
+          --o:  #137A6F;
+          --o-soft: #D8E8E5;
+          --d:  #0F2742;
+          --d-soft: #5C6470;
+          --bg: #F2EDE2;
+          --bg-warm: #EBE5D8;
+          --cream: #FAF7F2;
+          --line: rgba(15,39,66,0.08);
+          --fh: 'Familjen Grotesk', 'Helvetica Neue', Arial, sans-serif;
           --fb: 'Raleway', sans-serif;
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -214,7 +201,7 @@ export default function MarketMatePage() {
           right: -2%;
           bottom: -4px;
           height: 8px;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8' preserveAspectRatio='none'%3E%3Cpath d='M2 4 Q 25 1, 50 4 T 100 4 T 150 4 T 198 4' stroke='%23ff6b35' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8' preserveAspectRatio='none'%3E%3Cpath d='M2 4 Q 25 1, 50 4 T 100 4 T 150 4 T 198 4' stroke='%23137A6F' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
           background-size: 100% 100%;
           background-repeat: no-repeat;
           opacity: 0.85;
@@ -286,15 +273,15 @@ export default function MarketMatePage() {
         }
         .tile:hover {
           transform: translateY(-2px);
-          box-shadow: 0 18px 40px -16px rgba(42,39,37,0.14);
+          box-shadow: 0 18px 40px -16px rgba(15,39,66,0.14);
         }
         .tile.featured {
           background: var(--cream);
-          border-color: rgba(255,107,53,0.25);
+          border-color: rgba(19,122,111,0.25);
         }
         .tile.featured:hover {
-          box-shadow: 0 22px 50px -18px rgba(255,107,53,0.22);
-          border-color: rgba(255,107,53,0.4);
+          box-shadow: 0 22px 50px -18px rgba(19,122,111,0.22);
+          border-color: rgba(19,122,111,0.4);
         }
 
         .tile-meta {
@@ -342,7 +329,7 @@ export default function MarketMatePage() {
           border-top: 1px dashed var(--line);
           list-style: none;
         }
-        .tile.featured .tile-list { border-top-color: rgba(255,107,53,0.18); }
+        .tile.featured .tile-list { border-top-color: rgba(19,122,111,0.18); }
 
         .tile-list li {
           font-size: 14px;
@@ -382,8 +369,8 @@ export default function MarketMatePage() {
           color: var(--d);
           transition: border-color 0.18s, box-shadow 0.18s;
         }
-        .field:focus { border-color: var(--o); box-shadow: 0 0 0 4px rgba(255,107,53,0.12); }
-        .field::placeholder { color: rgba(42,39,37,0.4); }
+        .field:focus { border-color: var(--o); box-shadow: 0 0 0 4px rgba(19,122,111,0.12); }
+        .field::placeholder { color: rgba(15,39,66,0.4); }
 
         .divider {
           display: flex; align-items: center; gap: 18px;
@@ -411,7 +398,7 @@ export default function MarketMatePage() {
       <div style={{
         position: "fixed", top: -300, right: -200,
         width: 800, height: 800, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(255,107,53,0.07) 0%, transparent 62%)",
+        background: "radial-gradient(circle, rgba(19,122,111,0.07) 0%, transparent 62%)",
         pointerEvents: "none", zIndex: 0, filter: "blur(10px)",
       }} />
 
@@ -429,11 +416,11 @@ export default function MarketMatePage() {
         }}
       >
         <span className="fh" style={{
-          fontSize: 18, fontWeight: 900, letterSpacing: "-0.07em",
-          color: "var(--o)", textTransform: "uppercase",
-          lineHeight: 0.88, display: "inline-block",
+          fontSize: 22, fontWeight: 700, letterSpacing: "-0.03em",
+          color: "var(--o)",
+          lineHeight: 1, display: "inline-block",
         }}>
-          MARK<span style={{ letterSpacing: "-0.16em" }}>E</span>T<br />MA<span style={{ letterSpacing: "-0.16em" }}>T</span>E
+          MarketMate.
         </span>
         <motion.a href="#waitlist"
           whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
@@ -441,7 +428,7 @@ export default function MarketMatePage() {
             background: "var(--o)", color: "#fff", padding: "10px 22px",
             borderRadius: 100, fontSize: 13, fontWeight: 600, textDecoration: "none",
             fontFamily: "var(--fb)", letterSpacing: "0.02em",
-            boxShadow: "0 2px 14px rgba(255,107,53,0.28)",
+            boxShadow: "0 2px 14px rgba(19,122,111,0.28)",
           }}
         >Join the waitlist</motion.a>
       </motion.nav>
@@ -464,12 +451,11 @@ export default function MarketMatePage() {
           className="fh"
           style={{
             fontSize: "clamp(36px, 7vw, 90px)",
-            fontWeight: 900, letterSpacing: "-0.06em",
-            color: "var(--o)", lineHeight: 0.95, marginBottom: 20,
-            textTransform: "uppercase",
+            fontWeight: 700, letterSpacing: "-0.04em",
+            color: "var(--o)", lineHeight: 1, marginBottom: 20,
           }}
         >
-          MARKETMA<span style={{ letterSpacing: "-0.16em" }}>T</span>E<br />IS FOR…
+          MarketMate<br />is for…
         </motion.h1>
 
         <div style={{ width: "100%", maxWidth: 960, marginBottom: 32 }}>
@@ -800,7 +786,7 @@ export default function MarketMatePage() {
                       opacity: submitting ? 0.7 : 1,
                       transition: "background 0.18s, opacity 0.18s",
                       display: "inline-flex", alignItems: "center", justifyContent: "space-between",
-                      boxShadow: "0 4px 18px rgba(255,107,53,0.28)",
+                      boxShadow: "0 4px 18px rgba(19,122,111,0.28)",
                     }}
                   >
                     <span>{submitting ? "Joining…" : "Join the waitlist"}</span>
@@ -826,7 +812,7 @@ export default function MarketMatePage() {
                     padding: "32px 32px 28px",
                     background: "var(--cream)",
                     borderRadius: 18,
-                    border: "1.5px solid rgba(255,107,53,0.25)",
+                    border: "1.5px solid rgba(19,122,111,0.25)",
                   }}
                 >
                   <div className="fb" style={{
@@ -853,8 +839,8 @@ export default function MarketMatePage() {
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 12,
       }}>
-        <span className="fh" style={{ fontSize: 16, fontWeight: 900, letterSpacing: "-0.04em", color: "var(--d)" }}>
-          MarketMate
+        <span className="fh" style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.03em", color: "var(--o)" }}>
+          MarketMate.
         </span>
         <span className="fb" style={{ fontSize: 13, color: "var(--d-soft)", opacity: 0.7, fontStyle: "italic" }}>
           made with care, in the UK · © {new Date().getFullYear()}
