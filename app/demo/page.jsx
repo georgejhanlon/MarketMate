@@ -1583,12 +1583,12 @@ function BootScreen({ onBegin }) {
         whileTap={{ scale: 0.97 }}
         style={{
           padding: "20px 44px",
-          background: "var(--d)", color: "white",
+          background: "var(--o)", color: "white",
           border: "none", borderRadius: 100,
           fontSize: 15, fontWeight: 700,
           letterSpacing: "0.04em", textTransform: "uppercase",
           cursor: "pointer",
-          boxShadow: "0 12px 36px -12px rgba(15,39,66,0.4)",
+          boxShadow: "0 12px 36px -12px rgba(19,122,111,0.5)",
           display: "inline-flex", alignItems: "center", gap: 14,
         }}
       >
@@ -1929,10 +1929,10 @@ function DashboardPortal({ strategy, dashData }) {
         <aside className="app-sidebar">
           <div className="app-logo fh" style={{
             fontSize: 20, fontWeight: 700, letterSpacing: "-0.03em",
-            color: "var(--cream)", lineHeight: 1,
+            color: "var(--o)", lineHeight: 1,
             marginBottom: 28,
           }}>
-            MarketMate<span style={{ color: "var(--o)" }}>.</span>
+            MarketMate.
           </div>
 
           <nav className="app-nav">
